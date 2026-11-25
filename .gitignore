@@ -20,3 +20,12 @@ outputs/CHECKPOINTS_SHA256.txt
 outputs/logs/
 outputs/kaggle_bundle/
 outputs/inventory/
+
+# A3: pretrained weights cache (scripts/make_kaggle_bundle.py weights), Kaggle prepare outputs, big prediction files
+weights/
+outputs/prepare/
+outputs/upmc256.zip
+outputs/audit/
+outputs/kaggle_out/
+outputs/runs/**/predictions_*.npz
+outputs/runs/upmc/timing_*/

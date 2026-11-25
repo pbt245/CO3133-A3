@@ -1,0 +1,19 @@
+# UB - text only: DistilBERT-base-uncased, [CLS] -> dropout 0.1 -> linear 101, full fine-tuning [MANDATORY]
+base: ../common.yaml
+
+experiment:
+  name: ub_distilbert
+  id: UB
+
+model:
+  name: text_only
+  pretrained: true
+  head_dropout: 0.1
+
+train:
+  epochs: 5                 # BERT-style fine-tuning converges in a few epochs
+
+optim:
+  groups:
+    text_encoder: {lr: 0.00003, weight_decay: 0.01}
+    head: {lr: 0.001, weight_decay: 0.01}

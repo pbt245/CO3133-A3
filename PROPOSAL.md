@@ -9,10 +9,9 @@
 
 | Field | Value |
 | --- | --- |
-| Status | `[pending]` |
-| Decision (Approved / Approved with conditions / Rejected) | `[ ]` |
-| Conditions from instructor | `[ ]` |
-| Decision date | `[YYYY-MM-DD]` |
+| Status | **Approved** |
+| Decision | Approved (verbally by the instructor in class) |
+| Conditions from instructor | None |
 
 ---
 

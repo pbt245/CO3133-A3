@@ -1,0 +1,74 @@
+# Shared defaults for every Assignment 3 experiment (UPMC Food-101 image + title).
+# Experiment configs in configs/upmc/ override these. Write floats with a dot (0.001): PyYAML reads 1e-3 as a string.
+
+seed: 42                    # TRAINING seed (init, shuffling, augmentation). Override with --seed. Split seed is fixed.
+deterministic: false
+
+experiment:
+  name: null                # run folder name
+  id: null                  # proposal ID: UA, UB, F1, (F2, E1, E2 in M3)
+  group: main
+  mandatory: true
+  reference: null
+  changed_factor: null
+  hypothesis: null
+  decision_criterion: null
+
+data:
+  name: upmc
+  upmc_root: auto           # mirror with texts/ + images/ (auto: search /kaggle/input, or env UPMC_ROOT)
+  image_root: auto          # pre-resized copy upmc256 (auto: folder or upmc256.zip in /kaggle/input), else the mirror
+  split_dir: data/splits    # committed split files (scripts/prepare_data.py, split seed 42)
+  train_on: complete        # train / select on complete pairs (valid image + valid title)
+  image_size: 224
+  resize: 256               # eval: Resize(256) -> CenterCrop(224)
+  num_workers: 4
+  augment:                  # train only, identical for every model that sees the image (A2 setting)
+    crop_scale: [0.35, 1.0]
+    hflip: true
+    color_jitter: 0.1
+
+text:
+  model_dir: auto           # distilbert-base-uncased folder (auto: weights/ or /kaggle/input, env A3_WEIGHTS_DIR)
+  max_length: 64            # WordPiece tokens incl. [CLS]/[SEP]; batches are trimmed to their longest title
+
+train:
+  epochs: 10
+  batch_size: 64
+  eval_batch_size: 256
+  label_smoothing: 0.0
+  grad_clip: 1.0
+  amp: true                 # CUDA only
+  amp_dtype: auto           # bf16 where supported (RTX PRO 6000), else fp16 + GradScaler (T4)
+  early_stopping_patience: 3
+  checkpoint_metric: val_macro_f1
+  freeze_encoders_epochs: 0 # > 0: encoders frozen for the first N epochs (stage 1 of the F2 strategy, M3)
+  max_hours: 0              # > 0: stop after the epoch crossing this budget (resume later with --resume)
+  max_steps_per_epoch: 0    # > 0 only for timing runs / smoke tests
+  show_progress: true
+
+optim:
+  name: adamw
+  groups:                   # parameter-name prefix -> learning rate / weight decay (no decay on biases + norms)
+    image_encoder: {lr: 0.0001, weight_decay: 0.05}
+    text_encoder: {lr: 0.00003, weight_decay: 0.01}
+    head: {lr: 0.001, weight_decay: 0.05}
+
+scheduler:
+  name: cosine              # linear warm-up over warmup_ratio of all steps, then cosine to min_lr_ratio
+  warmup_ratio: 0.05
+  min_lr_ratio: 0.01
+
+eval:
+  amp: true
+  bootstrap_samples: 1000
+  ece_bins: 15
+  n_examples: 20
+  inference:
+    batch_size: 128         # throughput at batch 128, latency at batch 1
+    warmup_iters: 10
+    timed_iters: 30
+    latency_samples: 200
+
+output:
+  root: outputs/runs

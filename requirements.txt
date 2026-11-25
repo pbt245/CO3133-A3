@@ -1,0 +1,14 @@
+# Python >= 3.10. Kaggle images already ship all of these (runs use Internet OFF, nothing is installed there).
+# With an NVIDIA GPU, install the CUDA build of torch/torchvision first (https://pytorch.org/get-started/locally/).
+torch>=2.4
+torchvision>=0.19
+transformers>=4.40
+tokenizers>=0.19
+numpy>=1.24
+scipy>=1.10
+scikit-learn>=1.3
+pandas>=2.0
+matplotlib>=3.7
+Pillow>=10.0
+PyYAML>=6.0
+tqdm>=4.66

@@ -1,0 +1,20 @@
+# F1 - simple fusion: concat of projected ResNet-50 pooled feature and DistilBERT [CLS], MLP head,
+# trained end-to-end [MANDATORY]. Missing modality -> its projected vector is zero-filled.
+base: ../common.yaml
+
+experiment:
+  name: f1_concat
+  id: F1
+
+model:
+  name: concat_fusion
+  pretrained: true
+  proj_dim: 512
+  hidden_dim: 512
+  dropout: 0.1
+
+optim:
+  groups:
+    image_encoder: {lr: 0.0001, weight_decay: 0.05}
+    text_encoder: {lr: 0.00003, weight_decay: 0.01}
+    head: {lr: 0.0005, weight_decay: 0.05}

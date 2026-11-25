@@ -1,0 +1,12 @@
+# UA - image only: ImageNet-pretrained ResNet-50 (IMAGENET1K_V2), new 101-way head, full fine-tuning [MANDATORY]
+# Same recipe as A2 P1 (backbone LR 1e-4, head LR 1e-3, weight decay 0.05, same augmentation).
+base: ../common.yaml
+
+experiment:
+  name: ua_resnet50
+  id: UA
+
+model:
+  name: image_only
+  pretrained: true
+  head_dropout: 0.0
