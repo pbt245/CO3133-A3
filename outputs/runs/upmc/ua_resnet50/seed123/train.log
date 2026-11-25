@@ -1,0 +1,18 @@
+2026-11-25 12:00:45 | INFO | Run upmc-ua_resnet50-s123-20261125-120044 | device cuda | torch 2.12.0+cu130 | git {'commit': 'cfc509ab774b924283cbbbf6ef307aa0f1041b52', 'dirty': False, 'tag': None, 'source': 'git'}
+2026-11-25 12:00:46 | INFO | Data: images /home/calypso/co3133_t/data/upmc256 | sizes {'train': 62771, 'val': 4824}
+2026-11-25 12:00:46 | INFO | Dataset upmc | split /home/calypso/co3133_t/co3133-a3/data/splits/split.json | train/val = 62771/4824 complete pairs | modalities image=True text=False
+2026-11-25 12:00:47 | INFO | Model image_only | parameters {'total': '23,714,981', 'trainable': '23,714,981', 'image_encoder': '23,508,032', 'text_encoder': '0', 'head': '206,949'} | 4.09 GMACs/item
+2026-11-25 12:00:47 | INFO | AMP dtype torch.bfloat16 | optimizer groups [('head_no_decay', 2.0408163265306125e-06, 0.0, 101), ('head', 2.0408163265306125e-06, 0.05, 206848), ('image_encoder_no_decay', 2.0408163265306124e-07, 0.0, 53120), ('image_encoder', 2.0408163265306124e-07, 0.05, 23454912)]
+2026-11-25 12:02:22 | INFO | epoch  1 | train loss 2.6046 acc 0.4108 | val loss 1.7390 acc 0.5945 macroF1 0.5929 top5 0.8099 | 89s (707 items/s)  *best*
+2026-11-25 12:03:52 | INFO | epoch  2 | train loss 1.4871 acc 0.6400 | val loss 1.5377 acc 0.6449 macroF1 0.6415 top5 0.8371 | 86s (730 items/s)  *best*
+2026-11-25 12:05:23 | INFO | epoch  3 | train loss 1.1813 acc 0.7053 | val loss 1.4897 acc 0.6578 macroF1 0.6551 top5 0.8466 | 86s (731 items/s)  *best*
+2026-11-25 12:06:53 | INFO | epoch  4 | train loss 0.9441 acc 0.7582 | val loss 1.4848 acc 0.6677 macroF1 0.6668 top5 0.8547 | 86s (730 items/s)  *best*
+2026-11-25 12:08:23 | INFO | epoch  5 | train loss 0.7521 acc 0.8016 | val loss 1.5668 acc 0.6669 macroF1 0.6653 top5 0.8485 | 86s (731 items/s)
+2026-11-25 12:09:54 | INFO | epoch  6 | train loss 0.5805 acc 0.8440 | val loss 1.5928 acc 0.6797 macroF1 0.6775 top5 0.8510 | 86s (731 items/s)  *best*
+2026-11-25 12:11:24 | INFO | epoch  7 | train loss 0.4513 acc 0.8771 | val loss 1.6207 acc 0.6816 macroF1 0.6803 top5 0.8476 | 86s (732 items/s)  *best*
+2026-11-25 12:12:54 | INFO | epoch  8 | train loss 0.3583 acc 0.9041 | val loss 1.6524 acc 0.6824 macroF1 0.6810 top5 0.8528 | 86s (731 items/s)  *best*
+2026-11-25 12:14:24 | INFO | epoch  9 | train loss 0.3029 acc 0.9190 | val loss 1.6790 acc 0.6880 macroF1 0.6872 top5 0.8516 | 86s (732 items/s)  *best*
+2026-11-25 12:15:54 | INFO | epoch 10 | train loss 0.2769 acc 0.9274 | val loss 1.6769 acc 0.6870 macroF1 0.6857 top5 0.8497 | 86s (732 items/s)
+2026-11-25 12:15:54 | INFO | Best epoch 9 | val macroF1 0.6872 | val acc 0.6880 | train time 14.3 min
+2026-11-25 12:16:30 | INFO | [test] acc 0.7067 (95% CI 0.7009-0.7122) | macroF1 0.7078 (95% CI 0.7017-0.7126) | top5 0.8651 | ECE 0.1097 | dedup macroF1 0.6770 | 2792 items/s | bs1 4.60 ms
+2026-11-25 12:16:30 | INFO | Done: /home/calypso/co3133_t/co3133-a3/outputs/runs/upmc/ua_resnet50/seed123

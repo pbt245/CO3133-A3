@@ -1,0 +1,13 @@
+2026-11-25 12:34:47 | INFO | Run upmc-ub_distilbert-s123-20261125-123447 | device cuda | torch 2.12.0+cu130 | git {'commit': 'cfc509ab774b924283cbbbf6ef307aa0f1041b52', 'dirty': False, 'tag': None, 'source': 'git'}
+2026-11-25 12:34:51 | INFO | Data: images None | sizes {'train': 62771, 'val': 4824}
+2026-11-25 12:34:51 | INFO | Dataset upmc | split /home/calypso/co3133_t/co3133-a3/data/splits/split.json | train/val = 62771/4824 complete pairs | modalities image=False text=True
+2026-11-25 12:34:51 | INFO | Model text_only | parameters {'total': '66,440,549', 'trainable': '66,440,549', 'image_encoder': '0', 'text_encoder': '66,362,880', 'head': '77,669'} | 0.64 GMACs/item
+2026-11-25 12:34:51 | INFO | AMP dtype torch.bfloat16 | optimizer groups [('head_no_decay', 4.081632653061225e-06, 0.0, 101), ('head', 4.081632653061225e-06, 0.01, 77568), ('text_encoder_no_decay', 1.2244897959183676e-07, 0.0, 61440), ('text_encoder', 1.2244897959183676e-07, 0.01, 66301440)]
+2026-11-25 12:35:20 | INFO | epoch  1 | train loss 1.2972 acc 0.7391 | val loss 0.6691 acc 0.8545 macroF1 0.8667 top5 0.8990 | 26s (2372 items/s)  *best*
+2026-11-25 12:35:47 | INFO | epoch  2 | train loss 0.6095 acc 0.8636 | val loss 0.6323 acc 0.8663 macroF1 0.8670 top5 0.9065 | 26s (2441 items/s)  *best*
+2026-11-25 12:36:15 | INFO | epoch  3 | train loss 0.4560 acc 0.8919 | val loss 0.6414 acc 0.8692 macroF1 0.8696 top5 0.9123 | 26s (2425 items/s)  *best*
+2026-11-25 12:36:43 | INFO | epoch  4 | train loss 0.3290 acc 0.9184 | val loss 0.6552 acc 0.8725 macroF1 0.8725 top5 0.9136 | 26s (2435 items/s)  *best*
+2026-11-25 12:37:11 | INFO | epoch  5 | train loss 0.2660 acc 0.9347 | val loss 0.6601 acc 0.8727 macroF1 0.8726 top5 0.9144 | 26s (2438 items/s)  *best*
+2026-11-25 12:37:11 | INFO | Best epoch 5 | val macroF1 0.8726 | val acc 0.8727 | train time 2.2 min
+2026-11-25 12:37:25 | INFO | [test] acc 0.8697 (95% CI 0.8653-0.8738) | macroF1 0.8693 (95% CI 0.8646-0.8730) | top5 0.9120 | ECE 0.0370 | dedup macroF1 0.8696 | 17100 items/s | bs1 2.64 ms
+2026-11-25 12:37:25 | INFO | Done: /home/calypso/co3133_t/co3133-a3/outputs/runs/upmc/ub_distilbert/seed123

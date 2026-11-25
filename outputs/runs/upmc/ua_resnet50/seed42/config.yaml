@@ -1,0 +1,82 @@
+seed: 42
+deterministic: false
+experiment:
+  name: ua_resnet50
+  id: UA
+  group: main
+  mandatory: true
+  reference: null
+  changed_factor: null
+  hypothesis: null
+  decision_criterion: null
+data:
+  name: upmc
+  upmc_root: auto
+  image_root: auto
+  split_dir: data/splits
+  train_on: complete
+  image_size: 224
+  resize: 256
+  num_workers: 16
+  augment:
+    crop_scale:
+    - 0.35
+    - 1.0
+    hflip: true
+    color_jitter: 0.1
+text:
+  model_dir: auto
+  max_length: 64
+train:
+  epochs: 10
+  batch_size: 64
+  eval_batch_size: 256
+  label_smoothing: 0.0
+  grad_clip: 1.0
+  amp: true
+  amp_dtype: auto
+  early_stopping_patience: 3
+  checkpoint_metric: val_macro_f1
+  freeze_encoders_epochs: 0
+  max_hours: 0
+  max_steps_per_epoch: 0
+  show_progress: false
+optim:
+  name: adamw
+  groups:
+    image_encoder:
+      lr: 0.0001
+      weight_decay: 0.05
+    text_encoder:
+      lr: 3.0e-05
+      weight_decay: 0.01
+    head:
+      lr: 0.001
+      weight_decay: 0.05
+scheduler:
+  name: cosine
+  warmup_ratio: 0.05
+  min_lr_ratio: 0.01
+eval:
+  amp: true
+  bootstrap_samples: 1000
+  ece_bins: 15
+  n_examples: 20
+  inference:
+    batch_size: 128
+    warmup_iters: 10
+    timed_iters: 30
+    latency_samples: 200
+output:
+  root: outputs/runs
+model:
+  name: image_only
+  pretrained: true
+  head_dropout: 0.0
+run:
+  run_id: upmc-ua_resnet50-s42-20261125-114447
+  config_file: /home/calypso/co3133_t/co3133-a3/configs/upmc/ua_resnet50.yaml
+  overrides:
+  - data.num_workers=16
+  - train.show_progress=false
+  started_at: 2026-11-25T11:44:47-0500

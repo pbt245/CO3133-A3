@@ -1,0 +1,44 @@
+{
+  "run_id": "upmc-ub_distilbert-s42-20261125-123235",
+  "dataset": "upmc",
+  "experiment": "ub_distilbert",
+  "experiment_id": "UB",
+  "model": "text_only",
+  "seed": 42,
+  "device": "cuda",
+  "amp_dtype": "torch.bfloat16",
+  "finished": true,
+  "epochs_max": 5,
+  "epochs_run": 4,
+  "early_stopped": true,
+  "max_steps_per_epoch": 0,
+  "checkpoint_metric": "val_macro_f1",
+  "best_epoch": 1,
+  "best_val_loss": 0.6498568531490282,
+  "best_val_acc": 0.861318407960199,
+  "best_val_macro_f1": 0.8720800132741757,
+  "best_val_top5": 0.9036069651741293,
+  "train_time_s": 103.4659137467388,
+  "train_time_per_epoch_s": 25.8664784366847,
+  "train_items_per_s_mean": 2424.8838566172662,
+  "parameters": {
+    "total": 66440549,
+    "trainable": 66440549,
+    "image_encoder": 0,
+    "text_encoder": 66362880,
+    "head": 77669
+  },
+  "gmacs_per_item": 0.639161088,
+  "train_size": 62771,
+  "val_size": 4824,
+  "split_file": "/home/calypso/co3133_t/co3133-a3/data/splits/split.json",
+  "split_fingerprints": {
+    "train": "32547835c88028e6",
+    "val": "5028de5edbd16bda",
+    "test": "1f8fa282b49dc603"
+  },
+  "set_fingerprints": {
+    "train": "b8dc2b59b99377ba",
+    "val": "b6890e6c2b8c3019"
+  }
+}

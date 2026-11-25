@@ -1,0 +1,13 @@
+2026-11-25 12:32:35 | INFO | Run upmc-ub_distilbert-s42-20261125-123235 | device cuda | torch 2.12.0+cu130 | git {'commit': 'cfc509ab774b924283cbbbf6ef307aa0f1041b52', 'dirty': False, 'tag': None, 'source': 'git'}
+2026-11-25 12:32:39 | INFO | Data: images None | sizes {'train': 62771, 'val': 4824}
+2026-11-25 12:32:39 | INFO | Dataset upmc | split /home/calypso/co3133_t/co3133-a3/data/splits/split.json | train/val = 62771/4824 complete pairs | modalities image=False text=True
+2026-11-25 12:32:39 | INFO | Model text_only | parameters {'total': '66,440,549', 'trainable': '66,440,549', 'image_encoder': '0', 'text_encoder': '66,362,880', 'head': '77,669'} | 0.64 GMACs/item
+2026-11-25 12:32:39 | INFO | AMP dtype torch.bfloat16 | optimizer groups [('head_no_decay', 4.081632653061225e-06, 0.0, 101), ('head', 4.081632653061225e-06, 0.01, 77568), ('text_encoder_no_decay', 1.2244897959183676e-07, 0.0, 61440), ('text_encoder', 1.2244897959183676e-07, 0.01, 66301440)]
+2026-11-25 12:33:08 | INFO | epoch  1 | train loss 1.3056 acc 0.7370 | val loss 0.6499 acc 0.8613 macroF1 0.8721 top5 0.9036 | 26s (2395 items/s)  *best*
+2026-11-25 12:33:35 | INFO | epoch  2 | train loss 0.6066 acc 0.8644 | val loss 0.6369 acc 0.8642 macroF1 0.8700 top5 0.9094 | 26s (2439 items/s)
+2026-11-25 12:34:03 | INFO | epoch  3 | train loss 0.4515 acc 0.8930 | val loss 0.6406 acc 0.8721 macroF1 0.8717 top5 0.9133 | 26s (2431 items/s)
+2026-11-25 12:34:30 | INFO | epoch  4 | train loss 0.3247 acc 0.9208 | val loss 0.6537 acc 0.8719 macroF1 0.8715 top5 0.9169 | 26s (2434 items/s)
+2026-11-25 12:34:30 | INFO | Early stopping: no improvement in val_macro_f1 for 3 epochs.
+2026-11-25 12:34:30 | INFO | Best epoch 1 | val macroF1 0.8721 | val acc 0.8613 | train time 1.7 min
+2026-11-25 12:34:43 | INFO | [test] acc 0.8537 (95% CI 0.8492-0.8579) | macroF1 0.8651 (95% CI 0.8608-0.8688) | top5 0.8992 | ECE 0.0116 | dedup macroF1 0.8690 | 17072 items/s | bs1 2.81 ms
+2026-11-25 12:34:43 | INFO | Done: /home/calypso/co3133_t/co3133-a3/outputs/runs/upmc/ub_distilbert/seed42

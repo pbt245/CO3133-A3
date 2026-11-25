@@ -1,0 +1,19 @@
+mirror: /kaggle/input/datasets/gianmarco96/upmcfood101
+images: 90,704 | title rows: 90,688
+  10,000/90,704 images (159s)
+  20,000/90,704 images (314s)
+  30,000/90,704 images (466s)
+  40,000/90,704 images (620s)
+  50,000/90,704 images (773s)
+  60,000/90,704 images (930s)
+  70,000/90,704 images (1085s)
+  80,000/90,704 images (1237s)
+  90,000/90,704 images (1389s)
+image pass: 1400s | resized copy -> /kaggle/working/upmc256.zip (3.40 GB)
+pairs: title rows without image 0 | label mismatches 0 | split mismatches 0
+  pHash all-pairs over 90,701 valid images: 12,663 pairs <= 4 bits (58s)
+train: {'items': 63128, 'complete': 62771, 'text_missing': 355, 'image_missing': 2, 'both_missing': 0, 'test_dup': 0, 'cross_label': 869}
+val  : {'items': 4860, 'complete': 4824, 'text_missing': 36, 'image_missing': 0, 'both_missing': 0, 'test_dup': 0, 'cross_label': 75}
+test : {'items': 22716, 'complete': 22594, 'text_missing': 121, 'image_missing': 1, 'both_missing': 0, 'test_dup': 3290, 'cross_label': 296}
+duplicates: {"max_hamming": 4, "md5_edges": 3597, "phash_pairs": 12663, "phash_pairs_by_distance": {"0": 11083, "2": 1172, "4": 408}, "clusters_with_2plus_items": 7201, "items_in_2plus_clusters": 16498, "largest_clusters": [16, 13, 10, 10, 10, 8, 8, 8, 8, 7], "cross_label_clusters": 524}
+total 1557s -> /kaggle/working/prepare

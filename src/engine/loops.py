@@ -34,13 +34,16 @@ def make_grad_scaler(dtype):
 
 def to_device(batch: dict, device, drop: str | None = None) -> dict:
     """Move a batch to the device. drop='image' / 'text' marks that modality as missing for every item
-    (test-time modality removal; fusion models zero-fill it)."""
+    (test-time modality removal; fusion models zero-fill it). drop='keep_text' marks the text as present even
+    where the title failed the validity criterion (feed the uninformative title as it is)."""
     batch = trim_tokens(dict(batch))
     out = {k: (v.to(device, non_blocking=True) if torch.is_tensor(v) else v) for k, v in batch.items()}
     if drop == "image":
         out["has_img"] = torch.zeros_like(out["has_img"])
     elif drop == "text":
         out["has_txt"] = torch.zeros_like(out["has_txt"])
+    elif drop == "keep_text":
+        out["has_txt"] = torch.ones_like(out["has_txt"])
     return out
 
 

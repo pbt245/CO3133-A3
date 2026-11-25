@@ -1,0 +1,116 @@
+[
+  {
+    "a": "ub_distilbert",
+    "b": "k0_keyword",
+    "diff_macro_f1_pp": 3.2427904647947314,
+    "larger_std_pp": 0.25401550514081406,
+    "diff_exceeds_std": true,
+    "mcnemar_seed42": {
+      "b": 2031,
+      "c": 128,
+      "statistic": 1675.59240389069,
+      "p_value": 0.0,
+      "method": "chi2 with continuity correction"
+    },
+    "verdict": "ub_distilbert better",
+    "seeds": [
+      3,
+      1
+    ]
+  },
+  {
+    "a": "ub_distilbert",
+    "b": "ua_resnet50",
+    "diff_macro_f1_pp": 16.00238180905309,
+    "larger_std_pp": 0.25401550514081406,
+    "diff_exceeds_std": true,
+    "mcnemar_seed42": {
+      "b": 5503,
+      "c": 2219,
+      "statistic": 1395.7639212639212,
+      "p_value": 1.7496007598899155e-305,
+      "method": "chi2 with continuity correction"
+    },
+    "verdict": "ub_distilbert better",
+    "seeds": [
+      3,
+      3
+    ]
+  },
+  {
+    "a": "f0_late_fusion",
+    "b": "ub_distilbert",
+    "diff_macro_f1_pp": 7.064212801826897,
+    "larger_std_pp": 0.25401550514081406,
+    "diff_exceeds_std": true,
+    "mcnemar_seed42": {
+      "b": 2068,
+      "c": 178,
+      "statistic": 1588.7448797862867,
+      "p_value": 0.0,
+      "method": "chi2 with continuity correction"
+    },
+    "verdict": "f0_late_fusion better",
+    "seeds": [
+      3,
+      3
+    ]
+  },
+  {
+    "a": "f1_concat",
+    "b": "ub_distilbert",
+    "diff_macro_f1_pp": 6.001546214064824,
+    "larger_std_pp": 0.25401550514081406,
+    "diff_exceeds_std": true,
+    "mcnemar_seed42": {
+      "b": 1868,
+      "c": 161,
+      "statistic": 1434.418925579103,
+      "p_value": 0.0,
+      "method": "chi2 with continuity correction"
+    },
+    "verdict": "f1_concat better",
+    "seeds": [
+      3,
+      3
+    ]
+  },
+  {
+    "a": "f1_concat",
+    "b": "ua_resnet50",
+    "diff_macro_f1_pp": 22.003928023117915,
+    "larger_std_pp": 0.058458708440026326,
+    "diff_exceeds_std": true,
+    "mcnemar_seed42": {
+      "b": 5641,
+      "c": 650,
+      "statistic": 3958.0511842314418,
+      "p_value": 0.0,
+      "method": "chi2 with continuity correction"
+    },
+    "verdict": "f1_concat better",
+    "seeds": [
+      3,
+      3
+    ]
+  },
+  {
+    "a": "f1_concat",
+    "b": "f0_late_fusion",
+    "diff_macro_f1_pp": -1.0626665877620733,
+    "larger_std_pp": 0.23950781514795585,
+    "diff_exceeds_std": true,
+    "mcnemar_seed42": {
+      "b": 426,
+      "c": 609,
+      "statistic": 32.00386473429952,
+      "p_value": 1.53866163764617e-08,
+      "method": "chi2 with continuity correction"
+    },
+    "verdict": "f0_late_fusion better",
+    "seeds": [
+      3,
+      3
+    ]
+  }
+]

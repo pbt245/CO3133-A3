@@ -1,0 +1,72 @@
+% =====================================================================
+%  CO3133 - Deep Learning and Its Applications - Semester 261
+%  Assignment 3 - M2 draft report - Group G-roundhog
+%  Compiles with pdfLaTeX (needs vntex for the Vietnamese names; on Overleaf by default)
+%  or with XeLaTeX / LuaLaTeX:  latexmk -pdf main.tex
+% =====================================================================
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[utf8]{inputenc}
+  \usepackage[T5]{fontenc}
+  \usepackage{lmodern}
+\else
+  \usepackage{fontspec}
+\fi
+
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{booktabs,tabularx,array,multirow}
+\usepackage{graphicx}
+\graphicspath{{figures/}}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{xurl}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage[hidelinks]{hyperref}
+\usepackage[capitalise,noabbrev]{cleveref}
+
+\setcounter{secnumdepth}{3}
+\setlength{\emergencystretch}{3em}   % long \texttt names: stretch spaces instead of overflowing
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\cls}[1]{\texttt{#1}}
+\newcommand{\pending}[1]{\textcolor{orange!80!black}{\textit{[#1]}}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator{\LN}{LN}
+\DeclareMathOperator{\CE}{CE}
+
+\begin{document}
+\input{sections/cover}
+\tableofcontents
+\clearpage
+
+\input{sections/0_status}
+
+\part*{Part 1: Problem and Data Description}
+\addcontentsline{toc}{part}{Part 1: Problem and Data Description}
+\input{sections/1_problem_data}
+
+\part*{Part 2: Methodology}
+\addcontentsline{toc}{part}{Part 2: Methodology}
+\input{sections/2_methodology}
+
+\part*{Part 3: Implementation Results}
+\addcontentsline{toc}{part}{Part 3: Implementation Results}
+\input{sections/3_results}
+
+\part*{Part 4: Deviations and Plan for M3}
+\addcontentsline{toc}{part}{Part 4: Deviations and Plan for M3}
+\input{sections/4_deviations_plan}
+
+\input{sections/declarations}
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

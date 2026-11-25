@@ -1,0 +1,19 @@
+versions: {'torch': '2.12.0+cu130', 'torchvision': '0.27.0+cu130', 'transformers': '5.23.0', 'tokenizers': '0.23.3', 'numpy': '2.4.6', 'scipy': '1.18.0', 'sklearn': '1.9.1', 'pandas': '3.1.1', 'matplotlib': '3.10.9', 'yaml': '6.0.3', 'PIL': '12.2.0'}
+[OK] CUDA available: torch 2.12.0+cu130, CUDA 13.0
+[OK] bf16 supported
+    GPU 0 NVIDIA RTX A6000: 31.5 / 47.4 GB free (CUDA_VISIBLE_DEVICES=1)
+[OK] pre-resized images: /home/calypso/co3133_t/data/upmc256 {'train': 67988, 'test': 22716}
+[OK] title rows: 90688
+[OK] committed split fingerprints: {'train': '32547835c88028e6', 'val': '5028de5edbd16bda', 'test': '1f8fa282b49dc603'}
+[OK] every split item has an image: 0 missing
+[OK] ResNet-50 weights: /home/calypso/co3133_t/weights/resnet50-11ad3fa6.pth
+[OK] DistilBERT folder: /home/calypso/co3133_t/weights/distilbert-base-uncased
+[OK] sha256 config.json
+[OK] sha256 model.safetensors
+[OK] sha256 tokenizer.json
+[OK] sha256 tokenizer_config.json
+[OK] sha256 vocab.txt
+[OK] sha256 resnet50-11ad3fa6.pth
+[OK] tokenizer: ['[CLS]', 'easy', 'apple', 'pie', '|', 'taste', 'of', 'home', '[SEP]']
+[OK] F1 forward pass on GPU (bf16): (2, 101)
+ALL CHECKS PASSED

@@ -1,0 +1,78 @@
+{
+  "n": 200,
+  "classes": [
+    "bibimbap",
+    "bread_pudding",
+    "cannoli",
+    "chicken_curry",
+    "filet_mignon",
+    "frozen_yogurt",
+    "greek_salad",
+    "grilled_salmon",
+    "hot_and_sour_soup",
+    "macaroni_and_cheese",
+    "miso_soup",
+    "onion_rings",
+    "oysters",
+    "pancakes",
+    "peking_duck",
+    "pizza",
+    "red_velvet_cake",
+    "samosa",
+    "scallops",
+    "spaghetti_bolognese"
+  ],
+  "verdicts": [
+    {
+      "verdict": "valid",
+      "count": 163,
+      "rate": 0.815,
+      "wilson95_low": 0.7554293723884824,
+      "wilson95_high": 0.8626980719938395
+    },
+    {
+      "verdict": "image_unrelated",
+      "count": 16,
+      "rate": 0.08,
+      "wilson95_low": 0.049840585889759974,
+      "wilson95_high": 0.12598948826714396
+    },
+    {
+      "verdict": "text_unrelated",
+      "count": 17,
+      "rate": 0.085,
+      "wilson95_low": 0.05374575017747561,
+      "wilson95_high": 0.13189587071565567
+    },
+    {
+      "verdict": "both_unrelated",
+      "count": 3,
+      "rate": 0.015,
+      "wilson95_low": 0.00511423779325831,
+      "wilson95_high": 0.04316572879269026
+    },
+    {
+      "verdict": "wrong_label",
+      "count": 1,
+      "rate": 0.005,
+      "wilson95_low": 0.0008831687156009814,
+      "wilson95_high": 0.02777370439789293
+    }
+  ],
+  "image_uninformative": {
+    "count": 19,
+    "rate": 0.095,
+    "wilson95": [
+      0.06166310271738653,
+      0.1436016116481994
+    ]
+  },
+  "text_uninformative": {
+    "count": 20,
+    "rate": 0.1,
+    "wilson95": [
+      0.06567044866909588,
+      0.1494058124327174
+    ]
+  }
+}

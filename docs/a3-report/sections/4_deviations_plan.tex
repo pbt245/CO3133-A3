@@ -1,0 +1,53 @@
+% =====================================================================
+%  Part 4: Deviations from the proposal and plan for M3
+% =====================================================================
+\section{Deviations from the Proposal and Plan for M3}
+\label{sec:deviations}
+
+\subsection{Deviations}
+
+\begin{table}[H]
+  \centering\small
+  \caption{Differences between the approved proposal and the M2 implementation.}
+  \begin{tabularx}{\linewidth}{@{}YYY@{}}
+    \toprule
+    Proposal & M2 & Reason \\
+    \midrule
+    Kaggle RTX PRO 6000 for all runs & lab RTX A6000 (shared) for training; Kaggle CPU notebook for data preparation & the Kaggle GPU quota ran out \\
+    validation $\approx 5{,}000$ items & $4{,}860$ items ($14$ folds, as the formula in the proposal gives) & formula of proposal section 3.1 \\
+    at least $1{,}253$ test duplicates (md5 only) & $3{,}290$ with pHash near-duplicates & near-duplicate search, as planned \\
+    K0 on exact class names ($71.2\%$) & K0 with the lexicon ($76.8\%$) & plurals and synonyms, as announced in the proposal \\
+    titles pre-tokenised into a cache & tokenised when the dataset is built (seconds) & a cache was not needed \\
+    one-epoch timing runs & 200-step timing runs before the main runs & enough to measure throughput and catch errors \\
+    four audit verdicts & five (adds ``both unrelated'') & the image and the title can both be off \\
+    -- & new title-unseen test view & title leakage found in M2 (\cref{sec:leakage}) \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\subsection{Plan for M3}
+
+\begin{itemize}
+  \item \textbf{F2, the improved fusion.} The design follows the proposal:
+        \begin{itemize}
+          \item tokens: 49 image tokens from the ResNet-50 feature map and the title tokens, plus a learned
+                \texttt{[FUS]} token;
+          \item fusion: 2 transformer layers;
+          \item losses: auxiliary unimodal losses with $\lambda=0.5$;
+          \item missing modality: modality dropout with $p=0.15$ and learned \texttt{[MISSING]} tokens;
+          \item training: one epoch with frozen encoders, then full fine-tuning.
+        \end{itemize}
+        The M2 results give F2 a concrete target: keep F1's ability to combine partial evidence, but stop the
+        title from starving the image branch (\cref{sec:support}).
+  \item \textbf{Ablations.}
+        \begin{itemize}
+          \item E1: auxiliary losses on/off.
+          \item E2: class names masked in the titles, for UB, F1 and F2.
+          \item E-mod: test-time modality removal for F1 and F2.
+        \end{itemize}
+        The optional items E3, E4 and T0 follow if time allows.
+  \item \textbf{Analysis.} Support/conflict over three seeds, Grad-CAM and \texttt{[FUS]} attention examples, an
+        error taxonomy from a manual review of 100 conflict items, temperature scaling, and the title-unseen view
+        as a reported metric.
+  \item \textbf{Deliverables.} Final report, slides, video, Pages update and public checkpoints.
+\end{itemize}

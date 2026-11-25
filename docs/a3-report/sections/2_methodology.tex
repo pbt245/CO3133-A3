@@ -1,0 +1,160 @@
+% =====================================================================
+%  Part 2: Methodology
+% =====================================================================
+\section{Methodology}
+\label{sec:method}
+
+\subsection{Pipeline}
+
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[node distance=4mm and 6mm, every node/.style={font=\small},
+      box/.style={draw, rounded corners, align=center, minimum height=9mm, inner sep=3pt},
+      >={Stealth}]
+    \node[box] (raw) {Kaggle mirror\\images + titles};
+    \node[box, right=of raw] (prep) {\texttt{prepare\_data}\\validity, clusters,\\split, resize};
+    \node[box, right=of prep] (split) {committed\\\texttt{data/splits}};
+    \node[box, right=of split] (train) {\texttt{train}\\UA, UB, F1\\$\times$ 3 seeds};
+    \node[box, right=of train] (eval) {\texttt{evaluate}\\test, subsets,\\cost};
+    \node[box, below=of eval] (cmp) {\texttt{compare}\\decision rule,\\support/conflict};
+    \node[box, left=of cmp] (ref) {K0 rule,\\F0 late fusion};
+    \draw[->] (raw) -- (prep); \draw[->] (prep) -- (split); \draw[->] (split) -- (train);
+    \draw[->] (train) -- (eval); \draw[->] (eval) -- (cmp); \draw[->] (eval) -- (ref); \draw[->] (ref) -- (cmp);
+  \end{tikzpicture}
+  \caption{M2 pipeline. Every step is a script in the repository; every run stores its configuration, environment,
+  log, history, selected checkpoint and test outputs.}
+  \label{fig:pipeline}
+\end{figure}
+
+\subsection{Modality-Specific Encoders}
+\label{sec:encoders}
+
+\paragraph{Image encoder.}
+We use ResNet-50~\cite{he2016resnet} with the torchvision ImageNet-1k weights \texttt{IMAGENET1K\_V2}, the same
+backbone as P1 in Assignment~2, without its classification layer. A $224\times224$ crop gives the pooled feature
+$\mathbf{u} = g_I(x^{I}) \in \R^{2048}$.
+
+\paragraph{Text encoder.}
+We use DistilBERT-base-uncased~\cite{sanh2019distilbert}, a 6-layer distilled BERT~\cite{devlin2019bert} with
+hidden size $768$. Titles are HTML-unescaped and tokenised with its uncased WordPiece tokenizer (at most 64
+tokens). Each batch is trimmed to the length of its longest title. The final hidden state of the
+\texttt{[CLS]} token gives $\mathbf{v} = g_T(x^{T}) \in \R^{768}$.
+
+\paragraph{Alignment.}
+The two modalities are aligned at the item level through the shared page id. There is no word-to-region
+annotation; token-level alignment is left to the cross-modal attention of F2 in M3.
+
+\subsection{Models}
+\label{sec:models}
+
+\begin{table}[H]
+  \centering\small
+  \caption{Models of M2. The parameter counts are printed by the code.}
+  \label{tab:models}
+  \begin{tabularx}{\linewidth}{@{}llYr@{}}
+    \toprule
+    ID & Modalities & Definition & Parameters \\
+    \midrule
+    K0 & text  & most-mentioned class in the title (lexicon, ties broken by the first mention); otherwise the most frequent train class & 0 \\
+    UA & image & $\operatorname{Linear}_{2048\to101}(\mathbf{u})$ & $23.71$\,M \\
+    UB & text  & $\operatorname{Linear}_{768\to101}(\operatorname{Dropout}_{0.1}(\mathbf{v}))$ & $66.44$\,M \\
+    F0 & both  & $\mathbf{p} = w\,\mathbf{p}_{\mathrm{UA}} + (1-w)\,\mathbf{p}_{\mathrm{UB}}$, with $w$ chosen on validation & $0$ extra \\
+    F1 & both  & concat fusion, \cref{eq:f1} & $91.89$\,M \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\paragraph{Late fusion (F0).}
+F0 averages the softmax outputs of the UA and UB runs of the same seed. The weight is
+$w^\star = \argmax_{w \in \{0, 0.05, \dots, 1\}} \mathrm{MacroF1}_{\mathrm{val}}(w)$. The selected weights are
+$0.45$, $0.45$ and $0.50$ for seeds 42, 123 and 2026. F0 needs no training, so it is a reference that tells us how
+much of the gain of a trained fusion comes from simply combining two good unimodal predictions.
+
+\paragraph{Concat fusion (F1, intermediate fusion).}
+Each modality is projected to $d=512$ and normalised. The two vectors are multiplied by availability masks
+$m_I, m_T \in \{0,1\}$, concatenated and passed through an MLP:
+\begin{equation}
+  \label{eq:f1}
+  \mathbf{h}_I = m_I \LN(W_I\mathbf{u}), \qquad
+  \mathbf{h}_T = m_T \LN(W_T\mathbf{v}), \qquad
+  f_{\mathrm{F1}} = W_2\,\operatorname{Dropout}_{0.1}\!\big(\operatorname{GELU}(W_1[\mathbf{h}_I;\mathbf{h}_T])\big),
+\end{equation}
+with $W_I \in \R^{512\times2048}$, $W_T \in \R^{512\times768}$, $W_1 \in \R^{512\times1024}$ and
+$W_2 \in \R^{101\times512}$. The whole model, including both encoders, is trained end to end with one
+cross-entropy loss on the fused logits.
+
+\paragraph{Missing-modality handling.}
+F1 zero-fills the projected vector of a missing modality ($m=0$). F0 falls back to the available unimodal model.
+F1 is trained on complete pairs only, so zero-filling is outside its training distribution. This is
+deliberate in M2: modality dropout is part of F2.
+
+\paragraph{Losses.}
+UA, UB and F1 each use a single cross-entropy loss. Per-modality auxiliary losses,
+$\mathcal{L} = \CE(\text{fused}) + \lambda\,[\CE(\text{image head}) + \CE(\text{text head})]$, belong to F2 and are
+tested in ablation E1 (M3).
+
+\subsection{Pretraining and Fine-Tuning}
+\label{sec:training}
+
+Both encoders start from public pretrained weights and are fully fine-tuned with discriminative learning rates.
+\Cref{tab:setup} lists the setup; only the noted values differ between models.
+
+\begin{table}[H]
+  \centering\small
+  \caption{Training setup.}
+  \label{tab:setup}
+  \begin{tabularx}{\linewidth}{@{}lY@{}}
+    \toprule
+    Image transforms & train: \texttt{RandomResizedCrop(224, scale 0.35--1)}, horizontal flip, colour jitter $0.1$; evaluation: \texttt{Resize(256)} + \texttt{CenterCrop(224)} \\
+    Optimiser & AdamW~\cite{loshchilov2019adamw}. Learning rates: image encoder $10^{-4}$, text encoder $3\cdot10^{-5}$, new layers $10^{-3}$ (UA, UB) or $5\cdot10^{-4}$ (F1). Weight decay $0.05$ (image encoder and heads), $0.01$ (text encoder); none on biases and normalisation parameters \\
+    Schedule & linear warm-up over $5\%$ of the steps, then cosine decay to $1\%$ \\
+    Epochs, batch & UA and F1: 10 epochs; UB: 5 epochs; batch size 64; bf16 autocast; gradient clipping at $1.0$ \\
+    Checkpoint & the epoch with the best validation macro-F1 on complete pairs; early stopping after 3 epochs without improvement \\
+    Seeds & split seed $42$ (fixed); training seeds $42$, $123$, $2026$ \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\subsection{Evaluation Protocol}
+\label{sec:protocol}
+
+\paragraph{Metrics.}
+\begin{itemize}
+  \item Macro-F1 (primary), top-1 and top-5 accuracy.
+  \item Expected calibration error with $15$ equal-width bins~\cite{guo2017calibration},
+        $\mathrm{ECE}=\sum_b \frac{|B_b|}{N}\,|\mathrm{acc}(B_b)-\mathrm{conf}(B_b)|$.
+  \item Per-class F1 and the confusion matrix.
+  \item Compute cost: parameters, training time, throughput at batch 128 and latency at batch 1.
+\end{itemize}
+
+\paragraph{Decision rule.}
+The rule is the same as in A1 and A2 and was registered in the proposal. Model~A is declared better than model~B
+only if both conditions hold:
+\begin{enumerate}
+  \item the difference in mean test macro-F1 over the three seeds exceeds the larger of the two seed standard deviations;
+  \item a McNemar test~\cite{mcnemar1947} on the seed-42 predictions rejects equal error rates at $p<0.05$.
+\end{enumerate}
+
+\paragraph{Test views.}
+Every model is evaluated on:
+\begin{itemize}
+  \item the complete test pairs ($22{,}594$);
+  \item the dedup subset;
+  \item the title-unseen subset;
+  \item titles that do or do not mention the true class;
+  \item the natural missing-text set ($121$ items).
+\end{itemize}
+The fusion models are also tested with each modality removed.
+
+\subsection{Hardware and Software}
+\label{sec:hardware}
+
+The Kaggle GPU quota ran out during M2, so the training runs used a lab workstation:
+\begin{itemize}
+  \item \textbf{GPU:} NVIDIA RTX A6000 (48\,GB), shared with other users' inference servers.
+  \item \textbf{Machine:} 64 CPU cores, Ubuntu 24.04.
+  \item \textbf{Software:} Python 3.13.13, PyTorch 2.12.0+cu130, torchvision 0.27.0, Transformers 5.23.0, CUDA 13.0.
+\end{itemize}
+The runner (\texttt{scripts/remote/}) runs inside \texttt{tmux}. It picks the GPU with the most free memory
+(32\,GB free at the start), logs the GPU usage every five minutes, and resumes from the last checkpoint after a
+crash; no crash occurred. Data preparation ran on a Kaggle CPU notebook with 4 vCPU (26 minutes).

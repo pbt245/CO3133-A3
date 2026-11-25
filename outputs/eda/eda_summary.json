@@ -1,0 +1,219 @@
+{
+  "counts": {
+    "train": {
+      "items": 63128,
+      "complete": 62771,
+      "text_missing": 355,
+      "image_missing": 2,
+      "both_missing": 0,
+      "test_dup": 0,
+      "cross_label": 869
+    },
+    "val": {
+      "items": 4860,
+      "complete": 4824,
+      "text_missing": 36,
+      "image_missing": 0,
+      "both_missing": 0,
+      "test_dup": 0,
+      "cross_label": 75
+    },
+    "test": {
+      "items": 22716,
+      "complete": 22594,
+      "text_missing": 121,
+      "image_missing": 1,
+      "both_missing": 0,
+      "test_dup": 3290,
+      "cross_label": 296
+    }
+  },
+  "pairing": {
+    "title_rows_without_image": 0,
+    "label_mismatch": 0,
+    "split_mismatch": 0,
+    "images_without_title_row": 16
+  },
+  "train_complete_per_class": {
+    "min": 549,
+    "max": 661,
+    "ratio": 1.204007285974499
+  },
+  "mentions": {
+    "train": {
+      "exact_name": 0.7228019308279301,
+      "lexicon": 0.7884214047888356,
+      "other_class": 0.04561023402526645,
+      "other_not_true": 0.009590415956412994,
+      "no_class": 0.2019881792547514,
+      "k0_accuracy_complete": 0.7694954676522598
+    },
+    "val": {
+      "exact_name": 0.7317578772802653,
+      "lexicon": 0.7978855721393034,
+      "other_class": 0.046849087893864015,
+      "other_not_true": 0.006633499170812604,
+      "no_class": 0.19548092868988393,
+      "k0_accuracy_complete": 0.7767412935323383
+    },
+    "test": {
+      "exact_name": 0.7240860405417368,
+      "lexicon": 0.7883508896167124,
+      "other_class": 0.046516774364875633,
+      "other_not_true": 0.009471541117110738,
+      "no_class": 0.20217756926617686,
+      "k0_accuracy_complete": 0.768478357085952
+    }
+  },
+  "text": {
+    "words": {
+      "mean": 7.923107392971448,
+      "p0": 1.0,
+      "p1": 1.0,
+      "p5": 3.0,
+      "p25": 5.0,
+      "p50": 7.0,
+      "p75": 10.0,
+      "p95": 15.0,
+      "p99": 20.0,
+      "p100": 114.0
+    },
+    "chars": {
+      "mean": 49.618278036568746,
+      "p0": 1.0,
+      "p1": 9.0,
+      "p5": 18.0,
+      "p25": 35.0,
+      "p50": 47.0,
+      "p75": 61.0,
+      "p95": 90.0,
+      "p99": 120.0,
+      "p100": 1462.0
+    },
+    "tokens": {
+      "mean": 14.688056532623508,
+      "p0": 3.0,
+      "p1": 4.0,
+      "p5": 6.0,
+      "p25": 10.0,
+      "p50": 13.0,
+      "p75": 17.0,
+      "p95": 27.0,
+      "p99": 39.0,
+      "p100": 583.0
+    },
+    "truncated_at_64": 126,
+    "truncated_share": 0.001389378969654199,
+    "train_vocab_whitespace_lower": 29847,
+    "one_word_titles": {
+      "train": 751,
+      "val": 66,
+      "test": 283
+    }
+  },
+  "sites": {
+    "share_with_site": {
+      "train": 0.6357559244709162,
+      "val": 0.6382716049382716,
+      "test": 0.6489698890649762
+    },
+    "distinct_sites_train": 9294,
+    "sites_with_50plus_items": 96,
+    "weighted_majority_class_share_50plus": 0.1601582084563534
+  },
+  "images": {
+    "short_side": {
+      "mean": 432.8930366907744,
+      "p0": 120.0,
+      "p1": 140.0,
+      "p5": 192.0,
+      "p25": 295.0,
+      "p50": 387.0,
+      "p75": 565.0,
+      "p95": 779.0,
+      "p99": 897.0,
+      "p100": 900.0
+    },
+    "aspect_w_over_h": {
+      "mean": 1.2608189395480647,
+      "p0": 0.09222972972972973,
+      "p1": 0.6639004149377593,
+      "p5": 0.6696428571428571,
+      "p25": 1.0,
+      "p50": 1.3333333333333333,
+      "p75": 1.5,
+      "p95": 1.7770833333333333,
+      "p99": 2.1333333333333333,
+      "p100": 8.733624454148472
+    },
+    "kbytes": {
+      "mean": 91.02766221996825,
+      "p0": 2.583,
+      "p1": 9.15524,
+      "p5": 15.74015,
+      "p25": 32.80475,
+      "p50": 62.980999999999995,
+      "p75": 122.267,
+      "p95": 260.5327499999999,
+      "p99": 340.67391,
+      "p100": 640.035
+    },
+    "train_channel_mean_256px": [
+      0.6275556209841978,
+      0.5293779368215308,
+      0.42227793098654853
+    ],
+    "train_channel_std_256px": [
+      0.2677386144427777,
+      0.28381718500636816,
+      0.3089696557957722
+    ],
+    "invalid": {
+      "decode_fail": 0,
+      "short_side_lt_64": 0,
+      "near_constant_std_le_2": 3
+    }
+  },
+  "duplicates": {
+    "max_hamming": 4,
+    "md5_edges": 3597,
+    "phash_pairs": 12663,
+    "phash_pairs_by_distance": {
+      "0": 11083,
+      "2": 1172,
+      "4": 408
+    },
+    "clusters_with_2plus_items": 7201,
+    "items_in_2plus_clusters": 16498,
+    "largest_clusters": [
+      16,
+      13,
+      10,
+      10,
+      10,
+      8,
+      8,
+      8,
+      8,
+      7
+    ],
+    "cross_label_clusters": 524,
+    "repeated_titles": 10859,
+    "items_with_repeated_title": 41209,
+    "repeated_titles_across_official_splits": 4873,
+    "repeated_titles_across_labels": 800
+  },
+  "batch_example": [
+    "label: (8,) torch.int64",
+    "has_img: (8,) torch.float32",
+    "has_txt: (8,) torch.float32",
+    "index: (8,) torch.int64",
+    "image: (8, 3, 224, 224) torch.float32",
+    "input_ids: (8, 64) torch.int64",
+    "attention_mask: (8, 64) torch.int64",
+    "[apple_pie] [CLS] crock - pot ladies crock - pot apple pie moonshine [SEP]",
+    "[apple_pie] [CLS] mom ' s maple - apple pie recipe | taste of home [SEP]",
+    "[apple_pie] [CLS] recipe : easy homemade apple pie | squawkfox [SEP]",
+    "[apple_pie] [CLS] [ [ \" fireman ' s apple pie recipe - allrecipes. com \" ] ] [SEP]"
+  ]
+}

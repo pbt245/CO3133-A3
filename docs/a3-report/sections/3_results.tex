@@ -1,0 +1,261 @@
+% =====================================================================
+%  Part 3: Implementation results
+% =====================================================================
+\section{Implementation Results}
+\label{sec:results}
+
+Unless stated otherwise, the numbers are test results on the $22{,}594$ complete pairs, given as
+mean~$\pm$~sample standard deviation over the training seeds $42$, $123$ and $2026$. K0 is deterministic,
+so it has a single value.
+
+\subsection{Training Behaviour}
+\label{sec:curves}
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}{0.49\linewidth}
+    \includegraphics[width=\linewidth]{val_curves.png}
+    \caption{Validation macro-F1 per epoch (seed 42).}
+  \end{subfigure}\hfill
+  \begin{subfigure}{0.49\linewidth}
+    \includegraphics[width=\linewidth]{macro_f1.png}
+    \caption{Test macro-F1, mean $\pm$ std.}
+  \end{subfigure}
+  \caption{Training behaviour and the main result.}
+  \label{fig:curves}
+\end{figure}
+
+\begin{itemize}
+  \item \textbf{UA} improves slowly. Its training accuracy reaches $92.5\%$, while validation macro-F1 stays
+        around $68\%$. The best epoch is $9$ of $10$ for every seed.
+  \item \textbf{UB} converges almost at once: validation macro-F1 is $86.7$--$87.2\%$ after the first epoch.
+        Early stopping ends seed~42 at epoch $4$ with epoch $1$ selected.
+  \item \textbf{F1} starts at $90\%$ validation macro-F1 after one epoch, reaches $93\%$, and fits the training
+        set to $99.7\%$ accuracy, far above UA. \Cref{sec:support} shows that the text side alone can fit the
+        training titles.
+\end{itemize}
+
+\subsection{Unimodal versus Multimodal}
+\label{sec:main}
+
+\begin{table}[H]
+  \centering\small
+  \caption{Main comparison on the complete test pairs. ``Dedup'' removes test items whose image is linked
+  to a train image. ``Title unseen'' keeps only test items whose title never occurs in train or validation.}
+  \label{tab:main}
+  \resizebox{\linewidth}{!}{%
+  \begin{tabular}{@{}lcccccc@{}}
+    \toprule
+    Model & Accuracy & Macro-F1 & Top-5 & ECE & Macro-F1 dedup & Macro-F1 title unseen \\
+    \midrule
+    K0 keyword rule & $76.95$ & $83.56$ & $77.41$ & $2.97$ & $83.81$ & $82.89$ \\
+    UA image        & $70.73\pm0.09$ & $70.80\pm0.06$ & $86.51\pm0.16$ & $10.75\pm0.19$ & $67.72\pm0.03$ & $70.59\pm0.12$ \\
+    UB text         & $86.42\pm0.91$ & $86.80\pm0.25$ & $90.71\pm0.69$ & $2.84\pm1.46$ & $86.96\pm0.07$ & $82.57\pm0.44$ \\
+    F0 late fusion  & $\mathbf{93.93\pm0.23}$ & $\mathbf{93.86\pm0.24}$ & $\mathbf{97.71\pm0.07}$ & $15.98\pm0.78$ & $\mathbf{93.71\pm0.27}$ & $\mathbf{92.03\pm0.32}$ \\
+    F1 concat fusion & $92.85\pm0.06$ & $92.80\pm0.06$ & $97.15\pm0.04$ & $4.69\pm0.02$ & $92.80\pm0.07$ & $90.28\pm0.03$ \\
+    \bottomrule
+  \end{tabular}}
+\end{table}
+
+K0's macro-F1 is higher than its accuracy because the $20\%$ of titles without a class name all fall into one
+fallback class. That class gets a very low precision, while all other classes keep a high one.
+
+\begin{table}[H]
+  \centering\small
+  \caption{Decision rule. $b$ = items only A classifies correctly, $c$ = items only B classifies correctly (seed 42).}
+  \label{tab:decision}
+  \begin{tabular}{@{}lrrrrl@{}}
+    \toprule
+    A vs B & $\Delta$ macro-F1 (pp) & Larger std & $b$ / $c$ & McNemar $p$ & Verdict \\
+    \midrule
+    UB vs K0 & $+3.24$  & $0.25$ & $2{,}031$ / $128$   & $<10^{-300}$ & UB better \\
+    UB vs UA & $+16.00$ & $0.25$ & $5{,}503$ / $2{,}219$ & $2\cdot10^{-305}$ & UB better \\
+    F0 vs UB & $+7.06$  & $0.25$ & $2{,}068$ / $178$   & $<10^{-300}$ & F0 better \\
+    F1 vs UB & $+6.00$  & $0.25$ & $1{,}868$ / $161$   & $<10^{-300}$ & F1 better \\
+    F1 vs UA & $+22.00$ & $0.06$ & $5{,}641$ / $650$   & $<10^{-300}$ & F1 better \\
+    F1 vs F0 & $-1.06$  & $0.24$ & $426$ / $609$       & $1.5\cdot10^{-8}$ & \textbf{F0 better} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{enumerate}
+  \item \textbf{Text dominates.} UB is $16$\,pp above UA, as hypothesised in the proposal (E0). Kiela et al.\
+        report a $24$\,pp gap~\cite{kiela2019mmbt}, but with the full page text and a different split. A smaller
+        gap is consistent with titles carrying less information than full text.
+  \item \textbf{UB is more than a keyword matcher.} It is $9.5$\,pp more accurate than K0. Almost all of the
+        difference comes from titles without a class name: UB gets $39.2\%$ of them right, K0 $0.5\%$.
+  \item \textbf{Both fusions clearly beat the best unimodal model}, by $6$--$7$\,pp macro-F1 on the full test set,
+        the dedup subset and the title-unseen subset. Multimodality is therefore useful on this task, even though
+        the title already holds most of the label information.
+  \item \textbf{The trained fusion F1 loses to the late fusion F0.} The gap is $1.06$\,pp and significant. The
+        next subsection explains why.
+\end{enumerate}
+
+\subsection{Support and Conflict Analysis (preliminary, seed 42)}
+\label{sec:support}
+
+We group the test items by whether UA and UB are correct (specification, section~6.11) and measure each fusion
+model in every group (\cref{tab:support,fig:support}).
+
+\begin{table}[H]
+  \centering\small
+  \caption{Support and conflict groups. ``Follows image'' is the share of items where the F1 prediction equals
+  the UA prediction.}
+  \label{tab:support}
+  \begin{tabular}{@{}lrrrrr@{}}
+    \toprule
+    Group & Items & Share & F0 acc. & F1 acc. & F1 follows image \\
+    \midrule
+    Support (UA and UB right)           & $13{,}785$ & $61.0\%$ & $100.0$ & $99.8$ & $99.8\%$ \\
+    Conflict-I (only image right)       & $2{,}219$  & $9.8\%$  & $\mathbf{92.7}$ & $72.1$ & $72.1\%$ \\
+    Conflict-T (only text right)        & $5{,}503$  & $24.4\%$ & $96.8$ & $\mathbf{97.6}$ & $1.3\%$ \\
+    Both wrong, same prediction         & $143$      & $0.6\%$  & $0.0$  & $14.0$ & $77.6\%$ \\
+    Both wrong, different predictions   & $944$      & $4.2\%$  & $1.3$  & $26.3$ & $15.6\%$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{support_conflict.png}
+  \caption{Fusion accuracy per support/conflict group (seed 42).}
+  \label{fig:support}
+\end{figure}
+
+\begin{itemize}
+  \item \textbf{Support} items ($61\%$) are solved by every model. As the proposal expected, the fusion gain comes
+        almost entirely from the \textbf{conflict groups}: both fusions recover $93$--$98\%$ of the items on which
+        only one modality was right.
+  \item \textbf{Conflict-I is where F1 fails.} When the title is misleading, F1 still follows it in $28\%$ of the
+        items, while F0 recovers $92.7\%$. Among titles without a class name, conflict-I makes up $44.9\%$ of the
+        items; F1 solves only $72.2\%$ of them, F0 $93.9\%$.
+  \item \textbf{F1 under-uses the image (``modality laziness'').} Three observations point the same way:
+        \begin{itemize}
+          \item F1 fits the training set to $99.7\%$ accuracy.
+          \item With the title removed at test time, F1 falls to $53.3\%$ accuracy, far below the image-only
+                model UA ($70.7\%$).
+          \item With the image removed, F1 keeps $86.3\%$, the same as UB ($86.4\%$).
+        \end{itemize}
+        The image branch inside F1 is therefore weaker than a standalone image model. Joint training lets the
+        stronger, faster-learning modality dominate the shared head. This is the failure described by
+        Wang et al.~\cite{wang2020makes}, and it is what the auxiliary unimodal losses and the modality dropout
+        of F2 are designed to prevent.
+  \item On the other hand, F1 is the only model that rescues some ``both wrong'' items ($14$--$26\%$): it can
+        combine partial evidence that neither unimodal model turns into a correct decision on its own.
+\end{itemize}
+
+\subsection{Leakage Checks}
+\label{sec:leakage}
+
+\begin{table}[H]
+  \centering\small
+  \caption{Macro-F1 under the leakage-controlled views (mean over seeds; change vs the full test set in brackets).}
+  \label{tab:leakage}
+  \begin{tabular}{@{}lrrr@{}}
+    \toprule
+    View (items) & UA & UB & F1 \\
+    \midrule
+    Full test ($22{,}594$)          & $70.80$ & $86.80$ & $92.80$ \\
+    Dedup image ($19{,}270$)        & $67.72$ ($-3.1$) & $86.96$ ($+0.2$) & $92.80$ ($0.0$) \\
+    Title unseen ($13{,}701$)       & $70.59$ ($-0.2$) & $82.57$ ($-4.2$) & $90.28$ ($-2.5$) \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{itemize}
+  \item \textbf{Image duplicates} inflate the image model by $3.1$\,pp and do not affect the text model.
+  \item \textbf{Repeated titles} inflate the text model. UB is $91.7\%$ accurate on titles seen in train and $83.0\%$
+        on unseen titles. The image model serves as a control: $70.2\%$ versus $71.1\%$.
+  \item The ranking of the models and every decision in \cref{tab:decision} hold in both controlled views. M3 will
+        report the title-unseen view next to the main metric.
+\end{itemize}
+
+\subsection{Missing Modality}
+\label{sec:missing}
+
+On the $121$ natural text-missing test items, the models reach the following accuracy:
+\begin{itemize}
+  \item UA (the image is unaffected): $65.6\pm1.9\%$.
+  \item UB (uninformative title): $6.3\pm1.7\%$.
+  \item F0 with the title as is: $68.9\pm2.7\%$; F0 falling back to UA: $65.6\%$.
+  \item F1 with the text zero-filled: $51.8\pm1.7\%$.
+\end{itemize}
+F1 has never seen a missing modality during training, so zero-filling costs it $14$\,pp against UA. On the
+complete pairs, removing the title costs F1 $39.5$\,pp ($92.9\to53.3$). The M2 evaluation code zero-filled F1
+in both of its missing-text variants, because these items carry \texttt{has\_txt = 0}. The ``title as is''
+variant for F1 is fixed in the code and will be reported in M3.
+
+\subsection{Calibration}
+\label{sec:calibration}
+
+\begin{itemize}
+  \item \textbf{Well calibrated:} UB (ECE $2.8$) and F1 ($4.7$).
+  \item \textbf{Over-confident:} UA (ECE $10.8$; $1{,}091$ errors with confidence above $0.9$ on seed 42).
+  \item \textbf{Under-confident:} F0 (ECE $16.0$). Averaging two softmax outputs that disagree spreads the
+        probability mass, so the average confidence is lower than the accuracy.
+\end{itemize}
+Temperature scaling on the validation set~\cite{guo2017calibration} is a cheap fix that we plan for M3.
+
+\subsection{Early Error Analysis}
+\label{sec:errors}
+
+\begin{itemize}
+  \item \textbf{UA} confuses visually similar dishes, as in Assignment~2: \cls{ice\_cream}/\cls{frozen\_yogurt}
+        ($45 + 33$ test items), \cls{filet\_mignon}/\cls{steak} ($32 + 24$), \cls{gyoza}$\to$\cls{dumplings}~($22$)
+        and \cls{chocolate\_mousse}$\to$\cls{chocolate\_cake}~($22$). Its worst class is \cls{hot\_dog} (F1 $0.27$):
+        web ``hot dog recipe'' images often show toppings, buns or party spreads.
+  \item \textbf{UB} uses \cls{beef\_tartare} as a ``don't know'' class: its five largest confusions all predict
+        \cls{beef\_tartare} (precision $0.22$, recall $0.70$). Only $30\%$ of the training titles of that class
+        name the dish, and many are generic or not in English, so uninformative test titles drift towards it.
+  \item \textbf{Each modality wins on different classes.} The image is better for \cls{cheese\_plate},
+        \cls{beef\_tartare}, \cls{beef\_carpaccio} and \cls{croque\_madame}. The text is better for \cls{hot\_dog}
+        ($+57$\,pp F1), \cls{ice\_cream}, \cls{frozen\_yogurt}, \cls{steak}, \cls{pork\_chop} and \cls{ravioli}.
+        This is why the two modalities are complementary.
+  \item \textbf{F1}'s remaining confusions are genuinely ambiguous pairs: \cls{tuna\_tartare}/\cls{beef\_tartare}
+        and \cls{sushi}/\cls{sashimi} (\cref{fig:errors}).
+\end{itemize}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{f1_confident_errors.jpg}
+  \caption{The most confident F1 errors (seed 42), with the true class (T), the predicted class (P) and the title.}
+  \label{fig:errors}
+\end{figure}
+
+\subsection{Compute Cost}
+\label{sec:cost}
+
+\begin{table}[H]
+  \centering\small
+  \caption{Compute cost on the RTX A6000 (shared). Inference uses bf16, 224\,px images and titles trimmed per batch.}
+  \label{tab:cost}
+  \resizebox{\linewidth}{!}{%
+  \begin{tabular}{@{}lrrrrrr@{}}
+    \toprule
+    Model & Params & GMACs/item & Train time/run & Train items/s & Inference items/s & Latency \\
+     & & & & & (batch 128) & (batch 1) \\
+    \midrule
+    UA & $23.71$\,M & $4.09$ & $14.4$\,min & $728$   & $2{,}793$  & $4.7$\,ms \\
+    UB & $66.44$\,M & $0.64$ & $2.0$\,min  & $2{,}420$ & $17{,}105$ & $2.7$\,ms \\
+    F1 & $91.89$\,M & $4.73$ & $18.4$\,min & $568$   & $2{,}385$  & $7.7$\,ms \\
+    \bottomrule
+  \end{tabular}}
+\end{table}
+
+The $9$ training runs plus evaluation took $2.0$ GPU-hours. F0 and K0 add only seconds of CPU time. Training
+throughput was about $2.5\times$ lower than the proposal assumed for the Kaggle GPU, partly because the A6000 was
+shared with other jobs. We therefore re-budget M3 at about $6$--$8$ GPU-hours on this machine.
+
+\subsection{Limitations of this Draft}
+\label{sec:limits}
+
+\begin{itemize}
+  \item \textbf{Fixed test list.} The official test list cannot be regrouped: $14.5\%$ of its items have a train
+        image duplicate and $39\%$ share a title with train. We report leakage-controlled views instead.
+  \item \textbf{Validation shares titles with train.} The validation set is grouped by image clusters only. Model
+        selection is affected in the same way for all models.
+  \item \textbf{One seed for the analysis.} The support/conflict analysis uses seed 42 only. M3 repeats it over
+        the three seeds and adds Grad-CAM and attention examples.
+  \item \textbf{Titles only.} The results are not directly comparable with full-text results in the literature.
+  \item \textbf{Shared GPU.} The measured throughput depends on the other jobs that were running on the same GPU.
+\end{itemize}

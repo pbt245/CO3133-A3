@@ -117,7 +117,36 @@ def decide(df, agg, a, b):
             "seeds": [int(agg.loc[a, "n_seeds"]), int(agg.loc[b, "n_seeds"])]}
 
 
-def support_conflict(df, out: Path):
+def test_flags(meta_dir: Path) -> pd.DataFrame:
+    """Per test item, from the committed data/meta (no titles needed):
+    mention_true  the title mentions the true class (same lexicon as src/data/text.py)
+    title_seen    the normalised title occurs verbatim in train/val (several images of one web page, or a
+                  generic title: the image-duplicate grouping cannot see this, proposal 3.3 item 2)"""
+    tm = pd.read_csv(meta_dir / "text_meta.csv.gz", dtype={"id": str}, keep_default_na=False)
+    tm["mention_true"] = tm["mention_true"].astype(str).str.lower() == "true"
+    trainval = set(pd.read_csv(meta_dir.parent / "splits" / "train.csv", dtype={"id": str})["id"]) | \
+        set(pd.read_csv(meta_dir.parent / "splits" / "val.csv", dtype={"id": str})["id"])
+    seen = set(tm.loc[tm["id"].isin(trainval) & (tm["norm_md5"] != ""), "norm_md5"])
+    tm["title_seen"] = tm["norm_md5"].isin(seen) & (tm["norm_md5"] != "")
+    return tm.set_index("id")[["mention_true", "title_seen"]]
+
+
+def title_unseen(df, flags) -> pd.DataFrame:
+    """Accuracy / macro-F1 of every run on test items whose title never occurs in train/val."""
+    from src.engine.metrics import classification_metrics
+    rows = []
+    for r in df.itertuples():
+        ids, y, p = preds(r.run_dir)
+        seen = flags.loc[list(ids), "title_seen"].to_numpy()
+        k = int(max(y.max(), p.max()) + 1)
+        for name, m in (("seen", seen), ("unseen", ~seen)):
+            cm = classification_metrics(y[m], p[m], max(k, 101))
+            rows.append({"experiment": r.experiment, "seed": r.seed, "subset": name, "n": int(m.sum()),
+                         "accuracy": cm["accuracy"], "macro_f1": cm["macro_f1"]})
+    return pd.DataFrame(rows)
+
+
+def support_conflict(df, out: Path, flags=None):
     def run(e):
         r = df[(df.experiment == e) & (df.seed == 42)]
         return r.run_dir.iloc[0] if len(r) else None
@@ -127,23 +156,15 @@ def support_conflict(df, out: Path):
     _, _, pb = preds(run("ub_distilbert"))
     group = np.where(pa == y, np.where(pb == y, "support", "conflict_I"),
                      np.where(pb == y, "conflict_T", np.where(pa == pb, "both_wrong_agree", "both_wrong_disagree")))
-    mention = None
-    try:
-        from src.data.upmc import build_datasets
-        from src.engine.report import item_flags
-        from src.utils.config import load_config
-        cfg = load_config(Path(run("ub_distilbert")) / "config.yaml")
-        ds, meta = build_datasets(cfg, sets=("test",), need_image=False, need_text=False)
-        fl = item_flags(ds["test"].df, meta["classes"]).set_index("id").loc[list(ids)]
-        mention = fl["mention_true"].to_numpy()
-    except Exception as e:  # noqa: BLE001
-        print("mention flags unavailable:", e)
+    mention = flags.loc[list(ids), "mention_true"].to_numpy() if flags is not None else None
+    seen = flags.loc[list(ids), "title_seen"].to_numpy() if flags is not None else None
     rows = []
     fused = {e: preds(run(e))[2] for e in ("f0_late_fusion", "f1_concat") if run(e) is not None}
     names = ["support", "conflict_I", "conflict_T", "both_wrong_agree", "both_wrong_disagree"]
     subsets = [("all", np.ones(len(y), bool))]
     if mention is not None:
-        subsets += [("title mentions class", mention), ("no class mention", ~mention)]
+        subsets += [("title mentions class", mention), ("no class mention", ~mention),
+                    ("title seen in train", seen), ("title unseen", ~seen)]
     for sname, smask in subsets:
         for gname in names:
             m = (group == gname) & smask
@@ -175,6 +196,7 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("--runs", default="outputs/runs/upmc")
     p.add_argument("--out", default="outputs/comparison")
+    p.add_argument("--meta-dir", default="data/meta")
     args = p.parse_args()
     runs, out = resolve_path(args.runs), resolve_path(args.out)
     out.mkdir(parents=True, exist_ok=True)
@@ -237,7 +259,21 @@ def main():
                       (f"{d['mcnemar_seed42']['b']} / {d['mcnemar_seed42']['c']}, {d['mcnemar_seed42']['p_value']:.2g}"
                        if d["mcnemar_seed42"] else "-"), d["verdict"]] for d in decisions]), ""]
 
-    sc, _ = support_conflict(df, out)
+    flags = test_flags(resolve_path(args.meta_dir))
+    tu = title_unseen(df, flags)
+    tu.to_csv(out / "title_seen_unseen.csv", index=False)
+    ta = tu.groupby(["experiment", "subset"])[["accuracy", "macro_f1"]].agg(["mean", "std"])
+    n_seen = int(tu[tu.subset == "seen"].n.iloc[0])
+    md += ["## Title leakage check: titles seen / unseen in train", "",
+           f"{n_seen:,} of {int(first.n_test):,} complete test pairs ({100 * n_seen / first.n_test:.1f} %) have a "
+           "normalised title that also occurs in train/val (several images of one web page, or a generic title). "
+           "The image-duplicate grouping does not see these links.", "",
+           md_table(["model", "acc. title seen", "acc. title unseen", "macro-F1 title unseen"],
+                    [[L(e), pm(ta.loc[(e, "seen"), ("accuracy", "mean")], ta.loc[(e, "seen"), ("accuracy", "std")]),
+                      pm(ta.loc[(e, "unseen"), ("accuracy", "mean")], ta.loc[(e, "unseen"), ("accuracy", "std")]),
+                      pm(ta.loc[(e, "unseen"), ("macro_f1", "mean")], ta.loc[(e, "unseen"), ("macro_f1", "std")])]
+                     for e in E if (e, "unseen") in ta.index]), ""]
+    sc, _ = support_conflict(df, out, flags)
     if sc is not None:
         a = sc[sc.subset == "all"]
         fcols = [c for c in a.columns if c.endswith("_acc")]
@@ -249,7 +285,7 @@ def main():
                         [[r.group, f"{r.n:,}", f"{100 * r.share:.1f} %", *[f"{100 * getattr(r, c):.1f}" for c in fcols],
                           *[f"{100 * getattr(r, c):.1f}" for c in a.columns if c.endswith("_follows_image")]]
                          for r in a.itertuples()]), "",
-               "The same table split by whether the title mentions the true class is in support_conflict.csv.", ""]
+               "The same table split by class-name mention and by title seen / unseen is in support_conflict.csv.", ""]
 
     # figures
     fig, ax = plt.subplots(figsize=(8, 3.6))

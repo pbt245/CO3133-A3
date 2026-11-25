@@ -1,0 +1,11 @@
+{
+  "experiment": "k0_keyword",
+  "model": "keyword_rule",
+  "seed": 42,
+  "finished": true,
+  "train_time_s": 0.0,
+  "parameters": {
+    "total": 0
+  },
+  "best_val_macro_f1": 0.8415832715618861
+}

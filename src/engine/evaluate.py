@@ -83,7 +83,8 @@ def evaluate_run(run_dir, device, logger=None, overrides=None) -> dict:
     # natural missing-text set: titles that fail the validity criterion (proposal 2.3, 5.4)
     miss = {}
     if len(datasets["test_missing_text"]):
-        mt = run("test_missing_text")
+        # these items have has_txt = 0: "as is" feeds the (uninformative) title anyway, "zero-filled" drops it
+        mt = run("test_missing_text", drop="keep_text")
         save_predictions(out_dir, "test_missing_text", datasets["test_missing_text"].ids, mt["y_true"], mt["probs"], classes)
         all_items = np.ones(len(mt["y_true"]), bool)
         miss["as_is"] = subset_metrics(mt["y_true"], mt["probs"], all_items, k)

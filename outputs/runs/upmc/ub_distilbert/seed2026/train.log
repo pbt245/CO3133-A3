@@ -1,0 +1,13 @@
+2026-11-25 12:37:29 | INFO | Run upmc-ub_distilbert-s2026-20261125-123728 | device cuda | torch 2.12.0+cu130 | git {'commit': 'cfc509ab774b924283cbbbf6ef307aa0f1041b52', 'dirty': False, 'tag': None, 'source': 'git'}
+2026-11-25 12:37:32 | INFO | Data: images None | sizes {'train': 62771, 'val': 4824}
+2026-11-25 12:37:32 | INFO | Dataset upmc | split /home/calypso/co3133_t/co3133-a3/data/splits/split.json | train/val = 62771/4824 complete pairs | modalities image=False text=True
+2026-11-25 12:37:33 | INFO | Model text_only | parameters {'total': '66,440,549', 'trainable': '66,440,549', 'image_encoder': '0', 'text_encoder': '66,362,880', 'head': '77,669'} | 0.64 GMACs/item
+2026-11-25 12:37:33 | INFO | AMP dtype torch.bfloat16 | optimizer groups [('head_no_decay', 4.081632653061225e-06, 0.0, 101), ('head', 4.081632653061225e-06, 0.01, 77568), ('text_encoder_no_decay', 1.2244897959183676e-07, 0.0, 61440), ('text_encoder', 1.2244897959183676e-07, 0.01, 66301440)]
+2026-11-25 12:38:01 | INFO | epoch  1 | train loss 1.3057 acc 0.7367 | val loss 0.6660 acc 0.8584 macroF1 0.8667 top5 0.9013 | 26s (2391 items/s)  *best*
+2026-11-25 12:38:29 | INFO | epoch  2 | train loss 0.6102 acc 0.8638 | val loss 0.6427 acc 0.8632 macroF1 0.8646 top5 0.9078 | 26s (2418 items/s)
+2026-11-25 12:38:57 | INFO | epoch  3 | train loss 0.4577 acc 0.8917 | val loss 0.6453 acc 0.8673 macroF1 0.8682 top5 0.9138 | 26s (2423 items/s)  *best*
+2026-11-25 12:39:25 | INFO | epoch  4 | train loss 0.3318 acc 0.9187 | val loss 0.6543 acc 0.8706 macroF1 0.8705 top5 0.9129 | 26s (2425 items/s)  *best*
+2026-11-25 12:39:52 | INFO | epoch  5 | train loss 0.2680 acc 0.9348 | val loss 0.6598 acc 0.8702 macroF1 0.8699 top5 0.9136 | 26s (2424 items/s)
+2026-11-25 12:39:52 | INFO | Best epoch 4 | val macroF1 0.8705 | val acc 0.8706 | train time 2.2 min
+2026-11-25 12:40:05 | INFO | [test] acc 0.8694 (95% CI 0.8648-0.8737) | macroF1 0.8697 (95% CI 0.8650-0.8737) | top5 0.9100 | ECE 0.0367 | dedup macroF1 0.8704 | 17142 items/s | bs1 2.63 ms
+2026-11-25 12:40:05 | INFO | Done: /home/calypso/co3133_t/co3133-a3/outputs/runs/upmc/ub_distilbert/seed2026

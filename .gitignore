@@ -29,3 +29,7 @@ outputs/audit/
 outputs/kaggle_out/
 outputs/runs/**/predictions_*.npz
 outputs/runs/upmc/timing_*/
+# example grids (dataset images) are committed for seed 42 only
+outputs/runs/upmc/*/seed123/eval/examples_*.png
+outputs/runs/upmc/*/seed2026/eval/examples_*.png
+outputs/kaggle_out/

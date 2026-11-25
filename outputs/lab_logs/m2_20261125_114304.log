@@ -1,0 +1,385 @@
+[2026-11-25 11:43:04] repo /home/calypso/co3133_t/co3133-a3 @ cfc509a (dirty: 0 files)
+[2026-11-25 11:43:04] models: ua_resnet50 ub_distilbert f1_concat | seeds: 42 123 2026 | workers: 16
+[2026-11-25 11:43:04] GPUs (index,free MiB,used MiB,util %,temp C):
+    0,7792,40751,97,85
+    1,32498,16044,0,60
+[2026-11-25 11:43:04] using GPU 1 (32498 MiB free)
+[2026-11-25 11:43:04] STATUS: RUNNING timing check on GPU 1
+2026-11-25 11:43:07 | INFO | Run upmc-timing_ua_resnet50-s42-20261125-114306 | device cuda | torch 2.12.0+cu130 | git {'commit': 'cfc509ab774b924283cbbbf6ef307aa0f1041b52', 'dirty': False, 'tag': None, 'source': 'git'}
+2026-11-25 11:43:08 | INFO | Data: images /home/calypso/co3133_t/data/upmc256 | sizes {'train': 62771, 'val': 4824}
+2026-11-25 11:43:08 | INFO | Dataset upmc | split /home/calypso/co3133_t/co3133-a3/data/splits/split.json | train/val = 62771/4824 complete pairs | modalities image=True text=False
+2026-11-25 11:43:08 | INFO | Model image_only | parameters {'total': '23,714,981', 'trainable': '23,714,981', 'image_encoder': '23,508,032', 'text_encoder': '0', 'head': '206,949'} | 4.09 GMACs/item
+2026-11-25 11:43:08 | INFO | AMP dtype torch.bfloat16 | optimizer groups [('head_no_decay', 0.0001, 0.0, 101), ('head', 0.0001, 0.05, 206848), ('image_encoder_no_decay', 1e-05, 0.0, 53120), ('image_encoder', 1e-05, 0.05, 23454912)]
+2026-11-25 11:43:36 | INFO | epoch  1 | train loss 3.1501 acc 0.2941 | val loss 2.4976 acc 0.4268 macroF1 0.4125 top5 0.6932 | 22s (594 items/s)  *best*
+2026-11-25 11:43:37 | INFO | Best epoch 1 | val macroF1 0.4125 | val acc 0.4268 | train time 0.4 min
+2026-11-25 11:43:37 | INFO | Done: /home/calypso/co3133_t/co3133-a3/outputs/runs/upmc/timing_ua_resnet50/seed42
+2026-11-25 11:43:36 | INFO | epoch  1 | train loss 3.1501 acc 0.2941 | val loss 2.4976 acc 0.4268 macroF1 0.4125 top5 0.6932 | 22s (594 items/s)  *best*
+2026-11-25 11:43:43 | INFO | Run upmc-timing_ub_distilbert-s42-20261125-114342 | device cuda | torch 2.12.0+cu130 | git {'commit': 'cfc509ab774b924283cbbbf6ef307aa0f1041b52', 'dirty': False, 'tag': None, 'source': 'git'}
+2026-11-25 11:43:46 | INFO | Data: images None | sizes {'train': 62771, 'val': 4824}
+2026-11-25 11:43:46 | INFO | Dataset upmc | split /home/calypso/co3133_t/co3133-a3/data/splits/split.json | train/val = 62771/4824 complete pairs | modalities image=False text=True
+Loading weights:   0%|          | 0/100 [00:00<?, ?it/s]Loading weights: 100%|██████████| 100/100 [00:00<00:00, 10403.06it/s]
+[transformers] [1mDistilBertModel LOAD REPORT[0m from: /home/calypso/co3133_t/weights/distilbert-base-uncased
+Key                     | Status     |  | 
+------------------------+------------+--+-
+vocab_projector.bias    | UNEXPECTED |  | 
+vocab_transform.weight  | UNEXPECTED |  | 
+vocab_layer_norm.weight | UNEXPECTED |  | 
+vocab_layer_norm.bias   | UNEXPECTED |  | 
+vocab_transform.bias    | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+2026-11-25 11:43:47 | INFO | Model text_only | parameters {'total': '66,440,549', 'trainable': '66,440,549', 'image_encoder': '0', 'text_encoder': '66,362,880', 'head': '77,669'} | 0.64 GMACs/item
+2026-11-25 11:43:47 | INFO | AMP dtype torch.bfloat16 | optimizer groups [('head_no_decay', 0.0001, 0.0, 101), ('head', 0.0001, 0.01, 77568), ('text_encoder_no_decay', 3e-06, 0.0, 61440), ('text_encoder', 3e-06, 0.01, 66301440)]
+2026-11-25 11:43:55 | INFO | epoch  1 | train loss 2.0396 acc 0.6134 | val loss 0.8720 acc 0.8327 macroF1 0.8367 top5 0.8752 | 6s (2069 items/s)  *best*
+2026-11-25 11:43:56 | INFO | Best epoch 1 | val macroF1 0.8367 | val acc 0.8327 | train time 0.1 min
+2026-11-25 11:43:56 | INFO | Done: /home/calypso/co3133_t/co3133-a3/outputs/runs/upmc/timing_ub_distilbert/seed42
+2026-11-25 11:43:55 | INFO | epoch  1 | train loss 2.0396 acc 0.6134 | val loss 0.8720 acc 0.8327 macroF1 0.8367 top5 0.8752 | 6s (2069 items/s)  *best*
+2026-11-25 11:44:00 | INFO | Run upmc-timing_f1_concat-s42-20261125-114359 | device cuda | torch 2.12.0+cu130 | git {'commit': 'cfc509ab774b924283cbbbf6ef307aa0f1041b52', 'dirty': False, 'tag': None, 'source': 'git'}
+2026-11-25 11:44:04 | INFO | Data: images /home/calypso/co3133_t/data/upmc256 | sizes {'train': 62771, 'val': 4824}
+2026-11-25 11:44:04 | INFO | Dataset upmc | split /home/calypso/co3133_t/co3133-a3/data/splits/split.json | train/val = 62771/4824 complete pairs | modalities image=True text=True
+Loading weights:   0%|          | 0/100 [00:00<?, ?it/s]Loading weights: 100%|██████████| 100/100 [00:00<00:00, 8806.94it/s]
+[transformers] [1mDistilBertModel LOAD REPORT[0m from: /home/calypso/co3133_t/weights/distilbert-base-uncased
+Key                     | Status     |  | 
+------------------------+------------+--+-
+vocab_layer_norm.bias   | UNEXPECTED |  | 
+vocab_transform.weight  | UNEXPECTED |  | 
+vocab_layer_norm.weight | UNEXPECTED |  | 
+vocab_projector.bias    | UNEXPECTED |  | 
+vocab_transform.bias    | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+2026-11-25 11:44:05 | INFO | Model concat_fusion | parameters {'total': '91,892,389', 'trainable': '91,892,389', 'image_encoder': '23,508,032', 'text_encoder': '66,362,880', 'head': '2,021,477'} | 4.73 GMACs/item
+2026-11-25 11:44:05 | INFO | AMP dtype torch.bfloat16 | optimizer groups [('head_no_decay', 5e-05, 0.0, 3685), ('head', 5e-05, 0.05, 2017792), ('image_encoder_no_decay', 1e-05, 0.0, 53120), ('image_encoder', 1e-05, 0.05, 23454912), ('text_encoder_no_decay', 3e-06, 0.0, 61440), ('text_encoder', 3e-06, 0.01, 66301440)]
+2026-11-25 11:44:41 | INFO | epoch  1 | train loss 1.6619 acc 0.6552 | val loss 0.5932 acc 0.8762 macroF1 0.8754 top5 0.9380 | 27s (476 items/s)  *best*
+2026-11-25 11:44:41 | INFO | Best epoch 1 | val macroF1 0.8754 | val acc 0.8762 | train time 0.4 min
+2026-11-25 11:44:41 | INFO | Done: /home/calypso/co3133_t/co3133-a3/outputs/runs/upmc/timing_f1_concat/seed42
+2026-11-25 11:44:41 | INFO | epoch  1 | train loss 1.6619 acc 0.6552 | val loss 0.5932 acc 0.8762 macroF1 0.8754 top5 0.9380 | 27s (476 items/s)  *best*
+[2026-11-25 11:44:45] GPUs (index,free MiB,used MiB,util %,temp C):
+    0,7792,40751,0,80
+    1,32504,16038,0,79
+[2026-11-25 11:44:45] using GPU 1 (32504 MiB free)
+[2026-11-25 11:44:45] STATUS: RUNNING main runs, attempt 1/4 on GPU 1
+
+[1/9] upmc/ua_resnet50/seed42: /home/calypso/co3133_t/venv/bin/python /home/calypso/co3133_t/co3133-a3/scripts/train.py --config /home/calypso/co3133_t/co3133-a3/configs/upmc/ua_resnet50.yaml --seed 42 --device auto --set data.num_workers=16 train.show_progress=false
+2026-11-25 11:44:48 | INFO | Run upmc-ua_resnet50-s42-20261125-114447 | device cuda | torch 2.12.0+cu130 | git {'commit': 'cfc509ab774b924283cbbbf6ef307aa0f1041b52', 'dirty': False, 'tag': None, 'source': 'git'}
+2026-11-25 11:44:49 | INFO | Data: images /home/calypso/co3133_t/data/upmc256 | sizes {'train': 62771, 'val': 4824}
+2026-11-25 11:44:49 | INFO | Dataset upmc | split /home/calypso/co3133_t/co3133-a3/data/splits/split.json | train/val = 62771/4824 complete pairs | modalities image=True text=False
+2026-11-25 11:44:49 | INFO | Model image_only | parameters {'total': '23,714,981', 'trainable': '23,714,981', 'image_encoder': '23,508,032', 'text_encoder': '0', 'head': '206,949'} | 4.09 GMACs/item
+2026-11-25 11:44:49 | INFO | AMP dtype torch.bfloat16 | optimizer groups [('head_no_decay', 2.0408163265306125e-06, 0.0, 101), ('head', 2.0408163265306125e-06, 0.05, 206848), ('image_encoder_no_decay', 2.0408163265306124e-07, 0.0, 53120), ('image_encoder', 2.0408163265306124e-07, 0.05, 23454912)]
+2026-11-25 11:46:26 | INFO | epoch  1 | train loss 2.6098 acc 0.4106 | val loss 1.7181 acc 0.6022 macroF1 0.5988 top5 0.8120 | 90s (699 items/s)  *best*
+2026-11-25 11:47:56 | INFO | epoch  2 | train loss 1.4879 acc 0.6395 | val loss 1.5508 acc 0.6381 macroF1 0.6355 top5 0.8369 | 86s (727 items/s)  *best*
+2026-11-25 11:49:27 | INFO | epoch  3 | train loss 1.1787 acc 0.7063 | val loss 1.5001 acc 0.6619 macroF1 0.6594 top5 0.8460 | 86s (728 items/s)  *best*
+2026-11-25 11:50:58 | INFO | epoch  4 | train loss 0.9490 acc 0.7558 | val loss 1.5244 acc 0.6638 macroF1 0.6618 top5 0.8458 | 86s (728 items/s)  *best*
+2026-11-25 11:52:28 | INFO | epoch  5 | train loss 0.7484 acc 0.8009 | val loss 1.5534 acc 0.6739 macroF1 0.6714 top5 0.8466 | 86s (730 items/s)  *best*
+2026-11-25 11:53:59 | INFO | epoch  6 | train loss 0.5849 acc 0.8432 | val loss 1.6220 acc 0.6667 macroF1 0.6679 top5 0.8489 | 87s (722 items/s)
+2026-11-25 11:55:30 | INFO | epoch  7 | train loss 0.4537 acc 0.8761 | val loss 1.6492 acc 0.6816 macroF1 0.6804 top5 0.8468 | 87s (725 items/s)  *best*
+2026-11-25 11:57:00 | INFO | epoch  8 | train loss 0.3632 acc 0.9029 | val loss 1.6709 acc 0.6766 macroF1 0.6756 top5 0.8431 | 86s (731 items/s)
+2026-11-25 11:58:30 | INFO | epoch  9 | train loss 0.3071 acc 0.9182 | val loss 1.6731 acc 0.6818 macroF1 0.6807 top5 0.8451 | 86s (732 items/s)  *best*
+2026-11-25 12:00:00 | INFO | epoch 10 | train loss 0.2826 acc 0.9250 | val loss 1.6865 acc 0.6806 macroF1 0.6799 top5 0.8460 | 86s (733 items/s)
+2026-11-25 12:00:01 | INFO | Best epoch 9 | val macroF1 0.6807 | val acc 0.6818 | train time 14.4 min
+2026-11-25 12:00:36 | INFO | [test] acc 0.7083 (95% CI 0.7024-0.7140) | macroF1 0.7086 (95% CI 0.7026-0.7137) | top5 0.8635 | ECE 0.1060 | dedup macroF1 0.6776 | 2790 items/s | bs1 4.65 ms
+2026-11-25 12:00:36 | INFO | Done: /home/calypso/co3133_t/co3133-a3/outputs/runs/upmc/ua_resnet50/seed42
+
+[2/9] upmc/ua_resnet50/seed123: /home/calypso/co3133_t/venv/bin/python /home/calypso/co3133_t/co3133-a3/scripts/train.py --config /home/calypso/co3133_t/co3133-a3/configs/upmc/ua_resnet50.yaml --seed 123 --device auto --set data.num_workers=16 train.show_progress=false
+2026-11-25 12:00:45 | INFO | Run upmc-ua_resnet50-s123-20261125-120044 | device cuda | torch 2.12.0+cu130 | git {'commit': 'cfc509ab774b924283cbbbf6ef307aa0f1041b52', 'dirty': False, 'tag': None, 'source': 'git'}
+2026-11-25 12:00:46 | INFO | Data: images /home/calypso/co3133_t/data/upmc256 | sizes {'train': 62771, 'val': 4824}
+2026-11-25 12:00:46 | INFO | Dataset upmc | split /home/calypso/co3133_t/co3133-a3/data/splits/split.json | train/val = 62771/4824 complete pairs | modalities image=True text=False
+2026-11-25 12:00:47 | INFO | Model image_only | parameters {'total': '23,714,981', 'trainable': '23,714,981', 'image_encoder': '23,508,032', 'text_encoder': '0', 'head': '206,949'} | 4.09 GMACs/item
+2026-11-25 12:00:47 | INFO | AMP dtype torch.bfloat16 | optimizer groups [('head_no_decay', 2.0408163265306125e-06, 0.0, 101), ('head', 2.0408163265306125e-06, 0.05, 206848), ('image_encoder_no_decay', 2.0408163265306124e-07, 0.0, 53120), ('image_encoder', 2.0408163265306124e-07, 0.05, 23454912)]
+2026-11-25 12:02:22 | INFO | epoch  1 | train loss 2.6046 acc 0.4108 | val loss 1.7390 acc 0.5945 macroF1 0.5929 top5 0.8099 | 89s (707 items/s)  *best*
+2026-11-25 12:03:52 | INFO | epoch  2 | train loss 1.4871 acc 0.6400 | val loss 1.5377 acc 0.6449 macroF1 0.6415 top5 0.8371 | 86s (730 items/s)  *best*
+2026-11-25 12:05:23 | INFO | epoch  3 | train loss 1.1813 acc 0.7053 | val loss 1.4897 acc 0.6578 macroF1 0.6551 top5 0.8466 | 86s (731 items/s)  *best*
+2026-11-25 12:06:53 | INFO | epoch  4 | train loss 0.9441 acc 0.7582 | val loss 1.4848 acc 0.6677 macroF1 0.6668 top5 0.8547 | 86s (730 items/s)  *best*
+2026-11-25 12:08:23 | INFO | epoch  5 | train loss 0.7521 acc 0.8016 | val loss 1.5668 acc 0.6669 macroF1 0.6653 top5 0.8485 | 86s (731 items/s)
+2026-11-25 12:09:54 | INFO | epoch  6 | train loss 0.5805 acc 0.8440 | val loss 1.5928 acc 0.6797 macroF1 0.6775 top5 0.8510 | 86s (731 items/s)  *best*
+2026-11-25 12:11:24 | INFO | epoch  7 | train loss 0.4513 acc 0.8771 | val loss 1.6207 acc 0.6816 macroF1 0.6803 top5 0.8476 | 86s (732 items/s)  *best*
+2026-11-25 12:12:54 | INFO | epoch  8 | train loss 0.3583 acc 0.9041 | val loss 1.6524 acc 0.6824 macroF1 0.6810 top5 0.8528 | 86s (731 items/s)  *best*
+2026-11-25 12:14:24 | INFO | epoch  9 | train loss 0.3029 acc 0.9190 | val loss 1.6790 acc 0.6880 macroF1 0.6872 top5 0.8516 | 86s (732 items/s)  *best*
+2026-11-25 12:15:54 | INFO | epoch 10 | train loss 0.2769 acc 0.9274 | val loss 1.6769 acc 0.6870 macroF1 0.6857 top5 0.8497 | 86s (732 items/s)
+2026-11-25 12:15:54 | INFO | Best epoch 9 | val macroF1 0.6872 | val acc 0.6880 | train time 14.3 min
+2026-11-25 12:16:30 | INFO | [test] acc 0.7067 (95% CI 0.7009-0.7122) | macroF1 0.7078 (95% CI 0.7017-0.7126) | top5 0.8651 | ECE 0.1097 | dedup macroF1 0.6770 | 2792 items/s | bs1 4.60 ms
+2026-11-25 12:16:30 | INFO | Done: /home/calypso/co3133_t/co3133-a3/outputs/runs/upmc/ua_resnet50/seed123
+
+[3/9] upmc/ua_resnet50/seed2026: /home/calypso/co3133_t/venv/bin/python /home/calypso/co3133_t/co3133-a3/scripts/train.py --config /home/calypso/co3133_t/co3133-a3/configs/upmc/ua_resnet50.yaml --seed 2026 --device auto --set data.num_workers=16 train.show_progress=false
+2026-11-25 12:16:39 | INFO | Run upmc-ua_resnet50-s2026-20261125-121638 | device cuda | torch 2.12.0+cu130 | git {'commit': 'cfc509ab774b924283cbbbf6ef307aa0f1041b52', 'dirty': False, 'tag': None, 'source': 'git'}
+2026-11-25 12:16:40 | INFO | Data: images /home/calypso/co3133_t/data/upmc256 | sizes {'train': 62771, 'val': 4824}
+2026-11-25 12:16:40 | INFO | Dataset upmc | split /home/calypso/co3133_t/co3133-a3/data/splits/split.json | train/val = 62771/4824 complete pairs | modalities image=True text=False
+2026-11-25 12:16:40 | INFO | Model image_only | parameters {'total': '23,714,981', 'trainable': '23,714,981', 'image_encoder': '23,508,032', 'text_encoder': '0', 'head': '206,949'} | 4.09 GMACs/item
+2026-11-25 12:16:40 | INFO | AMP dtype torch.bfloat16 | optimizer groups [('head_no_decay', 2.0408163265306125e-06, 0.0, 101), ('head', 2.0408163265306125e-06, 0.05, 206848), ('image_encoder_no_decay', 2.0408163265306124e-07, 0.0, 53120), ('image_encoder', 2.0408163265306124e-07, 0.05, 23454912)]
+2026-11-25 12:18:17 | INFO | epoch  1 | train loss 2.6134 acc 0.4091 | val loss 1.6967 acc 0.6117 macroF1 0.6085 top5 0.8124 | 89s (706 items/s)  *best*
+2026-11-25 12:19:47 | INFO | epoch  2 | train loss 1.4935 acc 0.6381 | val loss 1.5512 acc 0.6422 macroF1 0.6416 top5 0.8311 | 86s (730 items/s)  *best*
+2026-11-25 12:21:18 | INFO | epoch  3 | train loss 1.1840 acc 0.7051 | val loss 1.5174 acc 0.6602 macroF1 0.6592 top5 0.8431 | 86s (729 items/s)  *best*
+2026-11-25 12:22:49 | INFO | epoch  4 | train loss 0.9480 acc 0.7563 | val loss 1.5165 acc 0.6638 macroF1 0.6646 top5 0.8472 | 86s (732 items/s)  *best*
+2026-11-25 12:24:20 | INFO | epoch  5 | train loss 0.7517 acc 0.8009 | val loss 1.5680 acc 0.6708 macroF1 0.6716 top5 0.8478 | 87s (725 items/s)  *best*
+2026-11-25 12:25:49 | INFO | epoch  6 | train loss 0.5889 acc 0.8404 | val loss 1.5786 acc 0.6725 macroF1 0.6707 top5 0.8481 | 86s (733 items/s)
+2026-11-25 12:27:20 | INFO | epoch  7 | train loss 0.4596 acc 0.8747 | val loss 1.6129 acc 0.6758 macroF1 0.6759 top5 0.8420 | 86s (731 items/s)  *best*
+2026-11-25 12:28:50 | INFO | epoch  8 | train loss 0.3671 acc 0.9012 | val loss 1.6345 acc 0.6770 macroF1 0.6758 top5 0.8470 | 86s (733 items/s)
+2026-11-25 12:30:20 | INFO | epoch  9 | train loss 0.3055 acc 0.9184 | val loss 1.6579 acc 0.6799 macroF1 0.6786 top5 0.8460 | 86s (733 items/s)  *best*
+2026-11-25 12:31:50 | INFO | epoch 10 | train loss 0.2826 acc 0.9261 | val loss 1.6415 acc 0.6774 macroF1 0.6772 top5 0.8441 | 86s (732 items/s)
+2026-11-25 12:31:51 | INFO | Best epoch 9 | val macroF1 0.6786 | val acc 0.6799 | train time 14.4 min
+2026-11-25 12:32:26 | INFO | [test] acc 0.7069 (95% CI 0.7013-0.7125) | macroF1 0.7076 (95% CI 0.7017-0.7128) | top5 0.8667 | ECE 0.1068 | dedup macroF1 0.6771 | 2797 items/s | bs1 4.80 ms
+2026-11-25 12:32:26 | INFO | Done: /home/calypso/co3133_t/co3133-a3/outputs/runs/upmc/ua_resnet50/seed2026
+
+[4/9] upmc/ub_distilbert/seed42: /home/calypso/co3133_t/venv/bin/python /home/calypso/co3133_t/co3133-a3/scripts/train.py --config /home/calypso/co3133_t/co3133-a3/configs/upmc/ub_distilbert.yaml --seed 42 --device auto --set data.num_workers=16 train.show_progress=false
+2026-11-25 12:32:35 | INFO | Run upmc-ub_distilbert-s42-20261125-123235 | device cuda | torch 2.12.0+cu130 | git {'commit': 'cfc509ab774b924283cbbbf6ef307aa0f1041b52', 'dirty': False, 'tag': None, 'source': 'git'}
+2026-11-25 12:32:39 | INFO | Data: images None | sizes {'train': 62771, 'val': 4824}
+2026-11-25 12:32:39 | INFO | Dataset upmc | split /home/calypso/co3133_t/co3133-a3/data/splits/split.json | train/val = 62771/4824 complete pairs | modalities image=False text=True
+Loading weights:   0%|          | 0/100 [00:00<?, ?it/s]Loading weights: 100%|██████████| 100/100 [00:00<00:00, 7577.79it/s]
+[transformers] [1mDistilBertModel LOAD REPORT[0m from: /home/calypso/co3133_t/weights/distilbert-base-uncased
+Key                     | Status     |  | 
+------------------------+------------+--+-
+vocab_layer_norm.weight | UNEXPECTED |  | 
+vocab_transform.weight  | UNEXPECTED |  | 
+vocab_transform.bias    | UNEXPECTED |  | 
+vocab_layer_norm.bias   | UNEXPECTED |  | 
+vocab_projector.bias    | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+2026-11-25 12:32:39 | INFO | Model text_only | parameters {'total': '66,440,549', 'trainable': '66,440,549', 'image_encoder': '0', 'text_encoder': '66,362,880', 'head': '77,669'} | 0.64 GMACs/item
+2026-11-25 12:32:39 | INFO | AMP dtype torch.bfloat16 | optimizer groups [('head_no_decay', 4.081632653061225e-06, 0.0, 101), ('head', 4.081632653061225e-06, 0.01, 77568), ('text_encoder_no_decay', 1.2244897959183676e-07, 0.0, 61440), ('text_encoder', 1.2244897959183676e-07, 0.01, 66301440)]
+2026-11-25 12:33:08 | INFO | epoch  1 | train loss 1.3056 acc 0.7370 | val loss 0.6499 acc 0.8613 macroF1 0.8721 top5 0.9036 | 26s (2395 items/s)  *best*
+2026-11-25 12:33:35 | INFO | epoch  2 | train loss 0.6066 acc 0.8644 | val loss 0.6369 acc 0.8642 macroF1 0.8700 top5 0.9094 | 26s (2439 items/s)
+2026-11-25 12:34:03 | INFO | epoch  3 | train loss 0.4515 acc 0.8930 | val loss 0.6406 acc 0.8721 macroF1 0.8717 top5 0.9133 | 26s (2431 items/s)
+2026-11-25 12:34:30 | INFO | epoch  4 | train loss 0.3247 acc 0.9208 | val loss 0.6537 acc 0.8719 macroF1 0.8715 top5 0.9169 | 26s (2434 items/s)
+2026-11-25 12:34:30 | INFO | Early stopping: no improvement in val_macro_f1 for 3 epochs.
+2026-11-25 12:34:30 | INFO | Best epoch 1 | val macroF1 0.8721 | val acc 0.8613 | train time 1.7 min
+2026-11-25 12:34:43 | INFO | [test] acc 0.8537 (95% CI 0.8492-0.8579) | macroF1 0.8651 (95% CI 0.8608-0.8688) | top5 0.8992 | ECE 0.0116 | dedup macroF1 0.8690 | 17072 items/s | bs1 2.81 ms
+2026-11-25 12:34:43 | INFO | Done: /home/calypso/co3133_t/co3133-a3/outputs/runs/upmc/ub_distilbert/seed42
+
+[5/9] upmc/ub_distilbert/seed123: /home/calypso/co3133_t/venv/bin/python /home/calypso/co3133_t/co3133-a3/scripts/train.py --config /home/calypso/co3133_t/co3133-a3/configs/upmc/ub_distilbert.yaml --seed 123 --device auto --set data.num_workers=16 train.show_progress=false
+2026-11-25 12:34:47 | INFO | Run upmc-ub_distilbert-s123-20261125-123447 | device cuda | torch 2.12.0+cu130 | git {'commit': 'cfc509ab774b924283cbbbf6ef307aa0f1041b52', 'dirty': False, 'tag': None, 'source': 'git'}
+2026-11-25 12:34:51 | INFO | Data: images None | sizes {'train': 62771, 'val': 4824}
+2026-11-25 12:34:51 | INFO | Dataset upmc | split /home/calypso/co3133_t/co3133-a3/data/splits/split.json | train/val = 62771/4824 complete pairs | modalities image=False text=True
+Loading weights:   0%|          | 0/100 [00:00<?, ?it/s]Loading weights: 100%|██████████| 100/100 [00:00<00:00, 9828.48it/s]
+[transformers] [1mDistilBertModel LOAD REPORT[0m from: /home/calypso/co3133_t/weights/distilbert-base-uncased
+Key                     | Status     |  | 
+------------------------+------------+--+-
+vocab_layer_norm.bias   | UNEXPECTED |  | 
+vocab_layer_norm.weight | UNEXPECTED |  | 
+vocab_transform.weight  | UNEXPECTED |  | 
+vocab_projector.bias    | UNEXPECTED |  | 
+vocab_transform.bias    | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+2026-11-25 12:34:51 | INFO | Model text_only | parameters {'total': '66,440,549', 'trainable': '66,440,549', 'image_encoder': '0', 'text_encoder': '66,362,880', 'head': '77,669'} | 0.64 GMACs/item
+2026-11-25 12:34:51 | INFO | AMP dtype torch.bfloat16 | optimizer groups [('head_no_decay', 4.081632653061225e-06, 0.0, 101), ('head', 4.081632653061225e-06, 0.01, 77568), ('text_encoder_no_decay', 1.2244897959183676e-07, 0.0, 61440), ('text_encoder', 1.2244897959183676e-07, 0.01, 66301440)]
+2026-11-25 12:35:20 | INFO | epoch  1 | train loss 1.2972 acc 0.7391 | val loss 0.6691 acc 0.8545 macroF1 0.8667 top5 0.8990 | 26s (2372 items/s)  *best*
+2026-11-25 12:35:47 | INFO | epoch  2 | train loss 0.6095 acc 0.8636 | val loss 0.6323 acc 0.8663 macroF1 0.8670 top5 0.9065 | 26s (2441 items/s)  *best*
+2026-11-25 12:36:15 | INFO | epoch  3 | train loss 0.4560 acc 0.8919 | val loss 0.6414 acc 0.8692 macroF1 0.8696 top5 0.9123 | 26s (2425 items/s)  *best*
+2026-11-25 12:36:43 | INFO | epoch  4 | train loss 0.3290 acc 0.9184 | val loss 0.6552 acc 0.8725 macroF1 0.8725 top5 0.9136 | 26s (2435 items/s)  *best*
+2026-11-25 12:37:11 | INFO | epoch  5 | train loss 0.2660 acc 0.9347 | val loss 0.6601 acc 0.8727 macroF1 0.8726 top5 0.9144 | 26s (2438 items/s)  *best*
+2026-11-25 12:37:11 | INFO | Best epoch 5 | val macroF1 0.8726 | val acc 0.8727 | train time 2.2 min
+2026-11-25 12:37:25 | INFO | [test] acc 0.8697 (95% CI 0.8653-0.8738) | macroF1 0.8693 (95% CI 0.8646-0.8730) | top5 0.9120 | ECE 0.0370 | dedup macroF1 0.8696 | 17100 items/s | bs1 2.64 ms
+2026-11-25 12:37:25 | INFO | Done: /home/calypso/co3133_t/co3133-a3/outputs/runs/upmc/ub_distilbert/seed123
+
+[6/9] upmc/ub_distilbert/seed2026: /home/calypso/co3133_t/venv/bin/python /home/calypso/co3133_t/co3133-a3/scripts/train.py --config /home/calypso/co3133_t/co3133-a3/configs/upmc/ub_distilbert.yaml --seed 2026 --device auto --set data.num_workers=16 train.show_progress=false
+2026-11-25 12:37:29 | INFO | Run upmc-ub_distilbert-s2026-20261125-123728 | device cuda | torch 2.12.0+cu130 | git {'commit': 'cfc509ab774b924283cbbbf6ef307aa0f1041b52', 'dirty': False, 'tag': None, 'source': 'git'}
+2026-11-25 12:37:32 | INFO | Data: images None | sizes {'train': 62771, 'val': 4824}
+2026-11-25 12:37:32 | INFO | Dataset upmc | split /home/calypso/co3133_t/co3133-a3/data/splits/split.json | train/val = 62771/4824 complete pairs | modalities image=False text=True
+Loading weights:   0%|          | 0/100 [00:00<?, ?it/s]Loading weights: 100%|██████████| 100/100 [00:00<00:00, 9593.34it/s]
+[transformers] [1mDistilBertModel LOAD REPORT[0m from: /home/calypso/co3133_t/weights/distilbert-base-uncased
+Key                     | Status     |  | 
+------------------------+------------+--+-
+vocab_layer_norm.weight | UNEXPECTED |  | 
+vocab_transform.weight  | UNEXPECTED |  | 
+vocab_projector.bias    | UNEXPECTED |  | 
+vocab_transform.bias    | UNEXPECTED |  | 
+vocab_layer_norm.bias   | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+2026-11-25 12:37:33 | INFO | Model text_only | parameters {'total': '66,440,549', 'trainable': '66,440,549', 'image_encoder': '0', 'text_encoder': '66,362,880', 'head': '77,669'} | 0.64 GMACs/item
+2026-11-25 12:37:33 | INFO | AMP dtype torch.bfloat16 | optimizer groups [('head_no_decay', 4.081632653061225e-06, 0.0, 101), ('head', 4.081632653061225e-06, 0.01, 77568), ('text_encoder_no_decay', 1.2244897959183676e-07, 0.0, 61440), ('text_encoder', 1.2244897959183676e-07, 0.01, 66301440)]
+2026-11-25 12:38:01 | INFO | epoch  1 | train loss 1.3057 acc 0.7367 | val loss 0.6660 acc 0.8584 macroF1 0.8667 top5 0.9013 | 26s (2391 items/s)  *best*
+2026-11-25 12:38:29 | INFO | epoch  2 | train loss 0.6102 acc 0.8638 | val loss 0.6427 acc 0.8632 macroF1 0.8646 top5 0.9078 | 26s (2418 items/s)
+2026-11-25 12:38:57 | INFO | epoch  3 | train loss 0.4577 acc 0.8917 | val loss 0.6453 acc 0.8673 macroF1 0.8682 top5 0.9138 | 26s (2423 items/s)  *best*
+2026-11-25 12:39:25 | INFO | epoch  4 | train loss 0.3318 acc 0.9187 | val loss 0.6543 acc 0.8706 macroF1 0.8705 top5 0.9129 | 26s (2425 items/s)  *best*
+2026-11-25 12:39:52 | INFO | epoch  5 | train loss 0.2680 acc 0.9348 | val loss 0.6598 acc 0.8702 macroF1 0.8699 top5 0.9136 | 26s (2424 items/s)
+2026-11-25 12:39:52 | INFO | Best epoch 4 | val macroF1 0.8705 | val acc 0.8706 | train time 2.2 min
+2026-11-25 12:40:05 | INFO | [test] acc 0.8694 (95% CI 0.8648-0.8737) | macroF1 0.8697 (95% CI 0.8650-0.8737) | top5 0.9100 | ECE 0.0367 | dedup macroF1 0.8704 | 17142 items/s | bs1 2.63 ms
+2026-11-25 12:40:05 | INFO | Done: /home/calypso/co3133_t/co3133-a3/outputs/runs/upmc/ub_distilbert/seed2026
+
+[7/9] upmc/f1_concat/seed42: /home/calypso/co3133_t/venv/bin/python /home/calypso/co3133_t/co3133-a3/scripts/train.py --config /home/calypso/co3133_t/co3133-a3/configs/upmc/f1_concat.yaml --seed 42 --device auto --set data.num_workers=16 train.show_progress=false
+2026-11-25 12:40:09 | INFO | Run upmc-f1_concat-s42-20261125-124009 | device cuda | torch 2.12.0+cu130 | git {'commit': 'cfc509ab774b924283cbbbf6ef307aa0f1041b52', 'dirty': False, 'tag': None, 'source': 'git'}
+2026-11-25 12:40:13 | INFO | Data: images /home/calypso/co3133_t/data/upmc256 | sizes {'train': 62771, 'val': 4824}
+2026-11-25 12:40:14 | INFO | Dataset upmc | split /home/calypso/co3133_t/co3133-a3/data/splits/split.json | train/val = 62771/4824 complete pairs | modalities image=True text=True
+Loading weights:   0%|          | 0/100 [00:00<?, ?it/s]Loading weights: 100%|██████████| 100/100 [00:00<00:00, 10602.39it/s]
+[transformers] [1mDistilBertModel LOAD REPORT[0m from: /home/calypso/co3133_t/weights/distilbert-base-uncased
+Key                     | Status     |  | 
+------------------------+------------+--+-
+vocab_projector.bias    | UNEXPECTED |  | 
+vocab_layer_norm.weight | UNEXPECTED |  | 
+vocab_transform.bias    | UNEXPECTED |  | 
+vocab_transform.weight  | UNEXPECTED |  | 
+vocab_layer_norm.bias   | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+2026-11-25 12:40:14 | INFO | Model concat_fusion | parameters {'total': '91,892,389', 'trainable': '91,892,389', 'image_encoder': '23,508,032', 'text_encoder': '66,362,880', 'head': '2,021,477'} | 4.73 GMACs/item
+2026-11-25 12:40:14 | INFO | AMP dtype torch.bfloat16 | optimizer groups [('head_no_decay', 1.0204081632653063e-06, 0.0, 3685), ('head', 1.0204081632653063e-06, 0.05, 2017792), ('image_encoder_no_decay', 2.0408163265306124e-07, 0.0, 53120), ('image_encoder', 2.0408163265306124e-07, 0.05, 23454912), ('text_encoder_no_decay', 6.122448979591838e-08, 0.0, 61440), ('text_encoder', 6.122448979591838e-08, 0.01, 66301440)]
+2026-11-25 12:42:16 | INFO | epoch  1 | train loss 1.2074 acc 0.7525 | val loss 0.4302 acc 0.9005 macroF1 0.9020 top5 0.9587 | 114s (552 items/s)  *best*
+2026-11-25 12:44:13 | INFO | epoch  2 | train loss 0.3561 acc 0.9169 | val loss 0.3585 acc 0.9200 macroF1 0.9196 top5 0.9689 | 110s (570 items/s)  *best*
+2026-11-25 12:46:08 | INFO | epoch  3 | train loss 0.2266 acc 0.9425 | val loss 0.4000 acc 0.9177 macroF1 0.9169 top5 0.9670 | 110s (571 items/s)
+2026-11-25 12:48:05 | INFO | epoch  4 | train loss 0.1422 acc 0.9626 | val loss 0.3817 acc 0.9196 macroF1 0.9188 top5 0.9695 | 110s (572 items/s)
+2026-11-25 12:50:01 | INFO | epoch  5 | train loss 0.0848 acc 0.9763 | val loss 0.4108 acc 0.9272 macroF1 0.9268 top5 0.9704 | 110s (571 items/s)  *best*
+2026-11-25 12:51:57 | INFO | epoch  6 | train loss 0.0497 acc 0.9863 | val loss 0.4269 acc 0.9272 macroF1 0.9267 top5 0.9687 | 110s (570 items/s)
+2026-11-25 12:53:53 | INFO | epoch  7 | train loss 0.0324 acc 0.9914 | val loss 0.4563 acc 0.9303 macroF1 0.9298 top5 0.9691 | 110s (571 items/s)  *best*
+2026-11-25 12:55:49 | INFO | epoch  8 | train loss 0.0199 acc 0.9944 | val loss 0.4587 acc 0.9293 macroF1 0.9285 top5 0.9722 | 110s (572 items/s)
+2026-11-25 12:57:45 | INFO | epoch  9 | train loss 0.0125 acc 0.9961 | val loss 0.4530 acc 0.9316 macroF1 0.9309 top5 0.9720 | 110s (572 items/s)  *best*
+2026-11-25 12:59:40 | INFO | epoch 10 | train loss 0.0092 acc 0.9967 | val loss 0.4492 acc 0.9316 macroF1 0.9308 top5 0.9722 | 110s (571 items/s)
+2026-11-25 12:59:41 | INFO | Best epoch 9 | val macroF1 0.9309 | val acc 0.9316 | train time 18.4 min
+2026-11-25 13:00:53 | INFO | [test] acc 0.9292 (95% CI 0.9260-0.9325) | macroF1 0.9287 (95% CI 0.9253-0.9318) | top5 0.9719 | ECE 0.0468 | dedup macroF1 0.9288 | 2386 items/s | bs1 7.57 ms
+2026-11-25 13:00:53 | INFO | [test] modality removal: image_removed acc 0.8620, text_removed acc 0.5304
+2026-11-25 13:00:53 | INFO | Done: /home/calypso/co3133_t/co3133-a3/outputs/runs/upmc/f1_concat/seed42
+
+[8/9] upmc/f1_concat/seed123: /home/calypso/co3133_t/venv/bin/python /home/calypso/co3133_t/co3133-a3/scripts/train.py --config /home/calypso/co3133_t/co3133-a3/configs/upmc/f1_concat.yaml --seed 123 --device auto --set data.num_workers=16 train.show_progress=false
+2026-11-25 13:01:03 | INFO | Run upmc-f1_concat-s123-20261125-130102 | device cuda | torch 2.12.0+cu130 | git {'commit': 'cfc509ab774b924283cbbbf6ef307aa0f1041b52', 'dirty': False, 'tag': None, 'source': 'git'}
+2026-11-25 13:01:07 | INFO | Data: images /home/calypso/co3133_t/data/upmc256 | sizes {'train': 62771, 'val': 4824}
+2026-11-25 13:01:07 | INFO | Dataset upmc | split /home/calypso/co3133_t/co3133-a3/data/splits/split.json | train/val = 62771/4824 complete pairs | modalities image=True text=True
+Loading weights:   0%|          | 0/100 [00:00<?, ?it/s]Loading weights: 100%|██████████| 100/100 [00:00<00:00, 9068.57it/s]
+[transformers] [1mDistilBertModel LOAD REPORT[0m from: /home/calypso/co3133_t/weights/distilbert-base-uncased
+Key                     | Status     |  | 
+------------------------+------------+--+-
+vocab_projector.bias    | UNEXPECTED |  | 
+vocab_layer_norm.weight | UNEXPECTED |  | 
+vocab_transform.weight  | UNEXPECTED |  | 
+vocab_layer_norm.bias   | UNEXPECTED |  | 
+vocab_transform.bias    | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+2026-11-25 13:01:08 | INFO | Model concat_fusion | parameters {'total': '91,892,389', 'trainable': '91,892,389', 'image_encoder': '23,508,032', 'text_encoder': '66,362,880', 'head': '2,021,477'} | 4.73 GMACs/item
+2026-11-25 13:01:08 | INFO | AMP dtype torch.bfloat16 | optimizer groups [('head_no_decay', 1.0204081632653063e-06, 0.0, 3685), ('head', 1.0204081632653063e-06, 0.05, 2017792), ('image_encoder_no_decay', 2.0408163265306124e-07, 0.0, 53120), ('image_encoder', 2.0408163265306124e-07, 0.05, 23454912), ('text_encoder_no_decay', 6.122448979591838e-08, 0.0, 61440), ('text_encoder', 6.122448979591838e-08, 0.01, 66301440)]
+2026-11-25 13:03:11 | INFO | epoch  1 | train loss 1.2108 acc 0.7519 | val loss 0.4408 acc 0.8972 macroF1 0.8985 top5 0.9602 | 114s (550 items/s)  *best*
+2026-11-25 13:05:08 | INFO | epoch  2 | train loss 0.3532 acc 0.9156 | val loss 0.3897 acc 0.9104 macroF1 0.9095 top5 0.9619 | 110s (569 items/s)  *best*
+2026-11-25 13:07:04 | INFO | epoch  3 | train loss 0.2317 acc 0.9413 | val loss 0.3610 acc 0.9198 macroF1 0.9193 top5 0.9693 | 110s (570 items/s)  *best*
+2026-11-25 13:09:00 | INFO | epoch  4 | train loss 0.1460 acc 0.9619 | val loss 0.3857 acc 0.9221 macroF1 0.9218 top5 0.9691 | 110s (571 items/s)  *best*
+2026-11-25 13:10:57 | INFO | epoch  5 | train loss 0.0861 acc 0.9769 | val loss 0.4064 acc 0.9254 macroF1 0.9252 top5 0.9708 | 110s (571 items/s)  *best*
+2026-11-25 13:12:53 | INFO | epoch  6 | train loss 0.0521 acc 0.9849 | val loss 0.4298 acc 0.9272 macroF1 0.9263 top5 0.9699 | 110s (571 items/s)  *best*
+2026-11-25 13:14:50 | INFO | epoch  7 | train loss 0.0304 acc 0.9920 | val loss 0.4338 acc 0.9283 macroF1 0.9277 top5 0.9714 | 110s (571 items/s)  *best*
+2026-11-25 13:16:46 | INFO | epoch  8 | train loss 0.0199 acc 0.9941 | val loss 0.4267 acc 0.9295 macroF1 0.9292 top5 0.9731 | 110s (570 items/s)  *best*
+2026-11-25 13:18:43 | INFO | epoch  9 | train loss 0.0128 acc 0.9961 | val loss 0.4300 acc 0.9316 macroF1 0.9309 top5 0.9724 | 110s (571 items/s)  *best*
+2026-11-25 13:20:39 | INFO | epoch 10 | train loss 0.0093 acc 0.9967 | val loss 0.4278 acc 0.9310 macroF1 0.9302 top5 0.9731 | 110s (570 items/s)
+2026-11-25 13:20:39 | INFO | Best epoch 9 | val macroF1 0.9309 | val acc 0.9316 | train time 18.4 min
+2026-11-25 13:21:52 | INFO | [test] acc 0.9282 (95% CI 0.9248-0.9311) | macroF1 0.9276 (95% CI 0.9240-0.9303) | top5 0.9716 | ECE 0.0472 | dedup macroF1 0.9275 | 2384 items/s | bs1 7.70 ms
+2026-11-25 13:21:52 | INFO | [test] modality removal: image_removed acc 0.8632, text_removed acc 0.5326
+2026-11-25 13:21:52 | INFO | Done: /home/calypso/co3133_t/co3133-a3/outputs/runs/upmc/f1_concat/seed123
+
+[9/9] upmc/f1_concat/seed2026: /home/calypso/co3133_t/venv/bin/python /home/calypso/co3133_t/co3133-a3/scripts/train.py --config /home/calypso/co3133_t/co3133-a3/configs/upmc/f1_concat.yaml --seed 2026 --device auto --set data.num_workers=16 train.show_progress=false
+2026-11-25 13:22:01 | INFO | Run upmc-f1_concat-s2026-20261125-132201 | device cuda | torch 2.12.0+cu130 | git {'commit': 'cfc509ab774b924283cbbbf6ef307aa0f1041b52', 'dirty': False, 'tag': None, 'source': 'git'}
+2026-11-25 13:22:05 | INFO | Data: images /home/calypso/co3133_t/data/upmc256 | sizes {'train': 62771, 'val': 4824}
+2026-11-25 13:22:05 | INFO | Dataset upmc | split /home/calypso/co3133_t/co3133-a3/data/splits/split.json | train/val = 62771/4824 complete pairs | modalities image=True text=True
+Loading weights:   0%|          | 0/100 [00:00<?, ?it/s]Loading weights: 100%|██████████| 100/100 [00:00<00:00, 9038.47it/s]
+[transformers] [1mDistilBertModel LOAD REPORT[0m from: /home/calypso/co3133_t/weights/distilbert-base-uncased
+Key                     | Status     |  | 
+------------------------+------------+--+-
+vocab_projector.bias    | UNEXPECTED |  | 
+vocab_transform.weight  | UNEXPECTED |  | 
+vocab_layer_norm.weight | UNEXPECTED |  | 
+vocab_layer_norm.bias   | UNEXPECTED |  | 
+vocab_transform.bias    | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+2026-11-25 13:22:06 | INFO | Model concat_fusion | parameters {'total': '91,892,389', 'trainable': '91,892,389', 'image_encoder': '23,508,032', 'text_encoder': '66,362,880', 'head': '2,021,477'} | 4.73 GMACs/item
+2026-11-25 13:22:06 | INFO | AMP dtype torch.bfloat16 | optimizer groups [('head_no_decay', 1.0204081632653063e-06, 0.0, 3685), ('head', 1.0204081632653063e-06, 0.05, 2017792), ('image_encoder_no_decay', 2.0408163265306124e-07, 0.0, 53120), ('image_encoder', 2.0408163265306124e-07, 0.05, 23454912), ('text_encoder_no_decay', 6.122448979591838e-08, 0.0, 61440), ('text_encoder', 6.122448979591838e-08, 0.01, 66301440)]
+2026-11-25 13:24:09 | INFO | epoch  1 | train loss 1.1993 acc 0.7533 | val loss 0.4250 acc 0.8995 macroF1 0.9003 top5 0.9583 | 114s (552 items/s)  *best*
+2026-11-25 13:26:06 | INFO | epoch  2 | train loss 0.3506 acc 0.9166 | val loss 0.3645 acc 0.9146 macroF1 0.9143 top5 0.9677 | 111s (566 items/s)  *best*
+2026-11-25 13:28:03 | INFO | epoch  3 | train loss 0.2292 acc 0.9419 | val loss 0.3663 acc 0.9216 macroF1 0.9211 top5 0.9708 | 110s (568 items/s)  *best*
+2026-11-25 13:30:00 | INFO | epoch  4 | train loss 0.1423 acc 0.9616 | val loss 0.3989 acc 0.9187 macroF1 0.9179 top5 0.9670 | 110s (569 items/s)
+2026-11-25 13:31:56 | INFO | epoch  5 | train loss 0.0856 acc 0.9765 | val loss 0.4118 acc 0.9225 macroF1 0.9218 top5 0.9735 | 110s (569 items/s)  *best*
+2026-11-25 13:33:53 | INFO | epoch  6 | train loss 0.0510 acc 0.9859 | val loss 0.4207 acc 0.9291 macroF1 0.9284 top5 0.9733 | 110s (570 items/s)  *best*
+2026-11-25 13:35:50 | INFO | epoch  7 | train loss 0.0308 acc 0.9919 | val loss 0.4289 acc 0.9303 macroF1 0.9294 top5 0.9726 | 110s (570 items/s)  *best*
+2026-11-25 13:37:46 | INFO | epoch  8 | train loss 0.0202 acc 0.9945 | val loss 0.4384 acc 0.9274 macroF1 0.9266 top5 0.9737 | 110s (571 items/s)
+2026-11-25 13:39:43 | INFO | epoch  9 | train loss 0.0125 acc 0.9962 | val loss 0.4356 acc 0.9306 macroF1 0.9297 top5 0.9747 | 110s (568 items/s)  *best*
+2026-11-25 13:41:39 | INFO | epoch 10 | train loss 0.0093 acc 0.9969 | val loss 0.4378 acc 0.9301 macroF1 0.9293 top5 0.9751 | 110s (570 items/s)
+2026-11-25 13:41:39 | INFO | Best epoch 9 | val macroF1 0.9297 | val acc 0.9306 | train time 18.4 min
+2026-11-25 13:42:53 | INFO | [test] acc 0.9282 (95% CI 0.9248-0.9316) | macroF1 0.9278 (95% CI 0.9242-0.9311) | top5 0.9711 | ECE 0.0468 | dedup macroF1 0.9277 | 2386 items/s | bs1 7.86 ms
+2026-11-25 13:42:53 | INFO | [test] modality removal: image_removed acc 0.8629, text_removed acc 0.5367
+2026-11-25 13:42:53 | INFO | Done: /home/calypso/co3133_t/co3133-a3/outputs/runs/upmc/f1_concat/seed2026
+
+=== Summary ===
+[1/9] upmc/ua_resnet50/seed42                 ok                    16.0 min
+[2/9] upmc/ua_resnet50/seed123                ok                    15.9 min
+[3/9] upmc/ua_resnet50/seed2026               ok                    15.9 min
+[4/9] upmc/ub_distilbert/seed42               ok                     2.2 min
+[5/9] upmc/ub_distilbert/seed123              ok                     2.7 min
+[6/9] upmc/ub_distilbert/seed2026             ok                     2.7 min
+[7/9] upmc/f1_concat/seed42                   ok                    20.9 min
+[8/9] upmc/f1_concat/seed123                  ok                    21.0 min
+[9/9] upmc/f1_concat/seed2026                 ok                    21.0 min
+[2026-11-25 13:43:00] STATUS: RUNNING K0 / F0 / compare
+K0 test acc 0.7695 macroF1 0.8356 | coverage 0.798 | acc when a class is mentioned 0.9632 -> /home/calypso/co3133_t/co3133-a3/outputs/runs/upmc/k0_keyword/seed42/eval
+seed 42: w_image 0.45 (val macroF1 0.9386) | test acc 0.9373 macroF1 0.9365 -> /home/calypso/co3133_t/co3133-a3/outputs/runs/upmc/f0_late_fusion/seed42/eval
+seed 123: w_image 0.45 (val macroF1 0.9396) | test acc 0.9388 macroF1 0.9382 -> /home/calypso/co3133_t/co3133-a3/outputs/runs/upmc/f0_late_fusion/seed123/eval
+seed 2026: w_image 0.50 (val macroF1 0.9435) | test acc 0.9418 macroF1 0.9412 -> /home/calypso/co3133_t/co3133-a3/outputs/runs/upmc/f0_late_fusion/seed2026/eval
+# M2 comparison - UPMC Food-101 (complete test pairs)
+
+Mean ± std over seeds (percent). Test = complete test pairs (valid image + valid title). Dedup = without test items linked to an official-train image and without cross-label clusters.
+
+| model | seeds | accuracy | macro-F1 | top-5 | ECE | dedup macro-F1 | val macro-F1 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| K0 keyword rule | 42 | 76.95 | 83.56 | 77.41 | 2.97 | 83.81 | 84.16 |
+| UA image (ResNet-50) | 42 123 2026 | 70.73 ± 0.09 | 70.80 ± 0.06 | 86.51 ± 0.16 | 10.75 ± 0.19 | 67.72 ± 0.03 | 68.22 ± 0.44 |
+| UB text (DistilBERT) | 42 123 2026 | 86.42 ± 0.91 | 86.80 ± 0.25 | 90.71 ± 0.69 | 2.84 ± 1.46 | 86.96 ± 0.07 | 87.17 ± 0.11 |
+| F0 late fusion | 42 123 2026 | 93.93 ± 0.23 | 93.86 ± 0.24 | 97.71 ± 0.07 | 15.98 ± 0.78 | 93.71 ± 0.27 | 94.06 ± 0.26 |
+| F1 concat fusion | 42 123 2026 | 92.85 ± 0.06 | 92.80 ± 0.06 | 97.15 ± 0.04 | 4.69 ± 0.02 | 92.80 ± 0.07 | 93.05 ± 0.07 |
+
+Test complete pairs: 22,594; dedup subset: 19,270; titles without a class mention: 4,782; natural missing-text set: 121.
+
+## Where the text helps: accuracy by subset
+
+| model | title mentions class | no class mention | missing-text set (as is) | missing-text, text zero-filled / fallback | image removed | text removed |
+| --- | --- | --- | --- | --- | --- | --- |
+| K0 keyword rule | 97.48 | 0.46 | 0.00 | - | - | - |
+| UA image (ResNet-50) | 71.74 ± 0.07 | 66.96 ± 0.17 | 65.56 ± 1.91 | - | - | - |
+| UB text (DistilBERT) | 99.10 ± 0.07 | 39.22 ± 4.07 | 6.34 ± 1.72 | - | - | - |
+| F0 late fusion | 99.03 ± 0.16 | 74.95 ± 1.58 | 68.87 ± 2.66 | 65.56 ± 1.91 | 86.42 ± 0.91 | 70.73 ± 0.09 |
+| F1 concat fusion | 99.05 ± 0.02 | 69.76 ± 0.24 | 51.79 ± 1.72 | 51.79 ± 1.72 | 86.27 ± 0.06 | 53.32 ± 0.32 |
+
+## Cost
+
+| model | params (M) | train time (min) | epochs run / best | throughput (items/s, bs 128) | latency (ms, bs 1) |
+| --- | --- | --- | --- | --- | --- |
+| K0 keyword rule | 0.0 | 0.0 | - | - | - |
+| UA image (ResNet-50) | 23.7 | 14.4 | 10.0 / 9.0 | 2793 | 4.68 |
+| UB text (DistilBERT) | 66.4 | 2.0 | 4.7 / 3.3 | 17105 | 2.69 |
+| F0 late fusion | 90.2 | 16.4 | - | - | - |
+| F1 concat fusion | 91.9 | 18.4 | 10.0 / 9.0 | 2385 | 7.71 |
+
+F0 train time = UA + UB; F0 weight on the image (tuned on val): seed 123: 0.45, seed 2026: 0.50, seed 42: 0.45
+
+## Decision rule (mean macro-F1 difference > larger std AND McNemar p < 0.05, seed 42)
+
+| A vs B | Δ macro-F1 (pp) | larger std (pp) | McNemar b / c, p | verdict |
+| --- | --- | --- | --- | --- |
+| UB text (DistilBERT) vs K0 keyword rule | +3.24 | 0.25 | 2031 / 128, 0 | ub_distilbert better |
+| UB text (DistilBERT) vs UA image (ResNet-50) | +16.00 | 0.25 | 5503 / 2219, 1.7e-305 | ub_distilbert better |
+| F0 late fusion vs UB text (DistilBERT) | +7.06 | 0.25 | 2068 / 178, 0 | f0_late_fusion better |
+| F1 concat fusion vs UB text (DistilBERT) | +6.00 | 0.25 | 1868 / 161, 0 | f1_concat better |
+| F1 concat fusion vs UA image (ResNet-50) | +22.00 | 0.06 | 5641 / 650, 0 | f1_concat better |
+| F1 concat fusion vs F0 late fusion | -1.06 | 0.24 | 426 / 609, 1.5e-08 | f0_late_fusion better |
+
+## Support / conflict (preliminary, seed 42)
+
+Groups by unimodal correctness: support = UA and UB right; conflict_I = only the image model right; conflict_T = only the text model right.
+
+| group | items | share | f0_late_fusion acc. | f1_concat acc. | f0_late_fusion follows image | f1_concat follows image |
+| --- | --- | --- | --- | --- | --- | --- |
+| support | 13,785 | 61.0 % | 100.0 | 99.8 | 100.0 | 99.8 |
+| conflict_I | 2,219 | 9.8 % | 92.7 | 72.1 | 92.7 | 72.1 |
+| conflict_T | 5,503 | 24.4 % | 96.8 | 97.6 | 3.2 | 1.3 |
+| both_wrong_agree | 143 | 0.6 % | 0.0 | 14.0 | 100.0 | 77.6 |
+| both_wrong_disagree | 944 | 4.2 % | 1.3 | 26.3 | 78.0 | 15.6 |
+
+The same table split by whether the title mentions the true class is in support_conflict.csv.
+
+-> /home/calypso/co3133_t/co3133-a3/outputs/comparison
+[2026-11-25 13:43:23] STATUS: RUNNING packing
+261 files -> /home/calypso/co3133_t/results/a3_results.zip (118.1 MB)
+9 checkpoints -> /home/calypso/co3133_t/results/a3_checkpoints_upmc.zip (2085 MB)
+Unzip at the repo root; check with: sha256sum -c CHECKPOINTS_SHA256.txt
