@@ -44,11 +44,17 @@ input{{width:100%;margin-top:4px;box-sizing:border-box}} .bar{{position:sticky;t
 both unrelated / wrong label. <button onclick="dl()">Download CSV</button> <span id="cnt"></span></div>
 <div class="grid">{cards}</div>
 <script>
-const V={verdicts};
-function upd(){{let n=0;document.querySelectorAll('.card').forEach(c=>{{const s=c.querySelector('select').value;
-c.classList.toggle('done',!!s);if(s)n++;}});document.getElementById('cnt').textContent=n+' / {n} labelled';}}
-document.querySelectorAll('select').forEach(s=>s.addEventListener('change',upd));upd();
-function dl(){{let rows=['id,label,verdict,note'];document.querySelectorAll('.card').forEach(c=>{{
+const KEY='upmc_pair_audit_v1';
+function cards(){{return document.querySelectorAll('.card');}}
+function save(){{const s={{}};cards().forEach(c=>{{s[c.dataset.id]=[c.querySelector('select').value,c.querySelector('input').value];}});
+try{{localStorage.setItem(KEY,JSON.stringify(s));}}catch(e){{}}}}
+function load(){{try{{const s=JSON.parse(localStorage.getItem(KEY)||'{{}}');cards().forEach(c=>{{const v=s[c.dataset.id];
+if(v){{c.querySelector('select').value=v[0];c.querySelector('input').value=v[1];}}}});}}catch(e){{}}}}
+function upd(){{let n=0;cards().forEach(c=>{{const s=c.querySelector('select').value;c.classList.toggle('done',!!s);if(s)n++;}});
+document.getElementById('cnt').textContent=n+' / '+cards().length+' labelled (auto-saved in this browser)';save();}}
+document.querySelectorAll('select,input').forEach(e=>{{e.addEventListener('change',upd);e.addEventListener('input',upd);}});
+load();upd();
+function dl(){{let rows=['id,label,verdict,note'];cards().forEach(c=>{{
 const note=c.querySelector('input').value.replaceAll('"','""');
 rows.push([c.dataset.id,c.dataset.label,c.querySelector('select').value,'"'+note+'"'].join(','));}});
 const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([rows.join('\\n')+'\\n'],{{type:'text/csv'}}));
