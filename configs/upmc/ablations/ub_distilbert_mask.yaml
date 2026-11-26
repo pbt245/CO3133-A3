@@ -1,0 +1,15 @@
+# E2 - modality contribution [MANDATORY]: UB trained and tested on titles where every class-name mention (lexicon
+# of src/data/text.py: the 101 names, singular/plural, synonyms) is replaced by [MASK], in train, val and test.
+base: ../ub_distilbert.yaml
+
+experiment:
+  name: ub_distilbert_mask
+  id: E2-UB
+  group: ablation
+  reference: ub_distilbert
+  changed_factor: "text.mask_class_names: false -> true"
+  hypothesis: "masking lowers UB by >= 10 pp, widens the fusion gain over UB, helps F2 on conflict items"
+  decision_criterion: "decision rule per model; F2 - UB gap as mean +- std"
+
+text:
+  mask_class_names: true

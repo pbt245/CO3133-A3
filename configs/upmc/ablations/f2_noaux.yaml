@@ -1,0 +1,16 @@
+# E1 - fusion component [MANDATORY]: F2 without the auxiliary unimodal losses (lambda = 0).
+# The two unimodal heads are still trained, on detached features (linear probes), so E1 (b) can compare how
+# discriminative the image encoder inside each fused model is. Everything else as F2.
+base: ../f2_crossmodal.yaml
+
+experiment:
+  name: f2_noaux
+  id: E1
+  group: ablation
+  reference: f2_crossmodal
+  changed_factor: "model.aux_weight: 0.5 -> 0"
+  hypothesis: "auxiliary losses give >= 0.5 pp macro-F1, a better image head and a smaller drop without text"
+  decision_criterion: "decision rule for macro-F1; image-head accuracy and text-removed accuracy as mean +- std"
+
+model:
+  aux_weight: 0.0

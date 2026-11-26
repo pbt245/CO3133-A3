@@ -4,6 +4,8 @@
 Missing text: F0 falls back to UA (w = 1) on the natural missing-text set.
 
   python scripts/late_fusion.py --seeds 42 123 2026     # -> outputs/runs/upmc/f0_late_fusion/seed<s>/
+  # E2: UA + the text model trained on masked titles
+  python scripts/late_fusion.py --text ub_distilbert_mask --name f0_late_fusion_mask --seeds 42 123 2026
 """
 import argparse
 import sys
@@ -34,6 +36,7 @@ def main():
     p.add_argument("--text", default="ub_distilbert")
     p.add_argument("--seeds", nargs="+", type=int, default=[42, 123, 2026])
     p.add_argument("--step", type=float, default=0.05)
+    p.add_argument("--name", default="f0_late_fusion", help="experiment folder of the result")
     args = p.parse_args()
     runs = resolve_path(args.runs)
     grid = np.round(np.arange(0, 1 + 1e-9, args.step), 4)
@@ -56,7 +59,8 @@ def main():
         _, yv, pav, pbv = P["val"]
         scores = [classification_metrics(yv, (w * pav + (1 - w) * pbv).argmax(1), k)["macro_f1"] for w in grid]
         w = float(grid[int(np.argmax(scores))])
-        run_dir = runs / "f0_late_fusion" / f"seed{seed}"
+        run_dir = runs / args.name / f"seed{seed}"
+        eid = "F0" if args.name == "f0_late_fusion" else "E2-F0" if args.name.endswith("_mask") else args.name
         out = run_dir / "eval"
         out.mkdir(parents=True, exist_ok=True)
         it, yt, pat, pbt = P["test"]
@@ -65,12 +69,12 @@ def main():
         save_predictions(out, "test", it, yt, pt, classes)
         save_predictions(out, "val", P["val"][0], yv, w * pav + (1 - w) * pbv, classes)
         m = test_report(yt, pt, it, classes, item_flags(ds["test"].df, classes), out, seed, cfg["eval"],
-                        f"upmc / f0_late_fusion / seed {seed}")
+                        f"upmc / {args.name} / seed {seed}")
         im_, ym, pam, pbm = P["test_missing_text"]
         save_predictions(out, "test_missing_text", im_, ym, pam, classes)
         ones = lambda y: np.ones(len(y), bool)
         sa, sb = load_json(ra / "train_summary.json"), load_json(rb / "train_summary.json")
-        metrics = {"experiment": "f0_late_fusion", "experiment_id": "F0", "model": "late_fusion", "seed": seed,
+        metrics = {"experiment": args.name, "experiment_id": eid, "model": "late_fusion", "seed": seed,
                    "split": "test (complete pairs)", **m, "weight_image": w,
                    "val_grid": {str(g): s for g, s in zip(grid, scores)},
                    "val": subset_metrics(yv, w * pav + (1 - w) * pbv, ones(yv), k),
@@ -82,10 +86,10 @@ def main():
                    "components": {"image": str(ra.relative_to(runs)), "text": str(rb.relative_to(runs))},
                    "split_fingerprints": meta["split_fingerprints"], "git_at_eval": git_info()}
         save_json(metrics, out / "test_metrics.json")
-        save_config({"seed": seed, "experiment": {"name": "f0_late_fusion", "id": "F0"},
+        save_config({"seed": seed, "experiment": {"name": args.name, "id": eid},
                      "model": {"name": "late_fusion", "image_run": str(ra), "text_run": str(rb), "weight_image": w},
                      "data": cfg["data"]}, run_dir / "config.yaml")
-        save_json({"experiment": "f0_late_fusion", "model": "late_fusion", "seed": seed, "finished": True,
+        save_json({"experiment": args.name, "model": "late_fusion", "seed": seed, "finished": True,
                    "train_time_s": sa["train_time_s"] + sb["train_time_s"], "parameters": metrics["parameters"],
                    "best_val_macro_f1": float(max(scores)), "weight_image": w}, run_dir / "train_summary.json")
         print(f"seed {seed}: w_image {w:.2f} (val macroF1 {max(scores):.4f}) | test acc {m['accuracy']:.4f} "

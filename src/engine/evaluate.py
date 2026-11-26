@@ -5,6 +5,8 @@ eval/
                                    (dedup, class-name mention), natural missing-text set, modality removal
                                    (fusion only), inference cost, checkpoint sha256, git
   predictions_{val,test,test_missing_text}.npz/.csv
+  predictions_test_drop_{image,text}.npz/.csv   fusion models: complete test pairs with one modality removed
+  predictions_test_aux_{image,text}.npz         F2: its auxiliary unimodal heads
   classification_report.csv, confusion_matrix.csv, confusion_matrix_normalized.png, top_confusions.csv
   examples_*.png                   image grids (models that see the image)
 Validation predictions are saved for F0 (late-fusion weight tuning on val, scripts/late_fusion.py).
@@ -91,12 +93,20 @@ def evaluate_run(run_dir, device, logger=None, overrides=None) -> dict:
         if getattr(model, "is_fusion", False):
             mz = run("test_missing_text", drop="text")
             miss["text_zero_filled"] = subset_metrics(mz["y_true"], mz["probs"], all_items, k)
-    # test-time modality removal on complete test pairs (E-mod; fusion models only)
+    # test-time modality removal on complete test pairs (E-mod; fusion models only). Per-item predictions are
+    # saved too: they give the removal curves (a random fraction of items without one modality, analysis_m3.py)
     removal = {}
     if getattr(model, "is_fusion", False):
         for drop in ("image", "text"):
             r = run("test", drop=drop)
+            save_predictions(out_dir, f"test_drop_{drop}", test_ds.ids, r["y_true"], r["probs"], classes)
             removal[f"{drop}_removed"] = subset_metrics(r["y_true"], r["probs"], np.ones(len(r["y_true"]), bool), k)
+    # F2: accuracy of the auxiliary unimodal heads inside the fused model (E1 (b))
+    aux_heads = {}
+    for name, pa in te["aux"].items():
+        aux_heads[name] = subset_metrics(te["y_true"], pa, np.ones(len(pa), bool), k)
+        np.savez_compressed(out_dir / f"predictions_test_aux_{name}.npz", ids=np.asarray(test_ds.ids),
+                            y_true=te["y_true"], probs=pa.astype(np.float16))
 
     # example grids (models that see the image)
     if getattr(model, "uses_image", False):
@@ -136,7 +146,7 @@ def evaluate_run(run_dir, device, logger=None, overrides=None) -> dict:
         "model": cfg["model"]["name"], "seed": seed, "split": "test (complete pairs)",
         "loss": te["loss"], **metrics,
         "val": subset_metrics(va["y_true"], va["probs"], np.ones(len(va["y_true"]), bool), k),
-        "missing_text": miss, "modality_removal": removal,
+        "missing_text": miss, "modality_removal": removal, "aux_heads": aux_heads,
         "parameters": count_parameters(model), "inference": inference, "eval_amp_dtype": str(amp_dtype),
         "eval_pass_time_s": eval_pass_time,
         "checkpoint": {"file": str(ckpt_path.relative_to(run_dir)), "epoch": ckpt.get("epoch"),
@@ -154,4 +164,6 @@ def evaluate_run(run_dir, device, logger=None, overrides=None) -> dict:
         f"{inference['throughput_items_per_s']:.0f} items/s | bs1 {inference['latency_ms_bs1_mean']:.2f} ms")
     if removal:
         log(f"[test] modality removal: " + ", ".join(f"{k2} acc {v['accuracy']:.4f}" for k2, v in removal.items()))
+    if aux_heads:
+        log(f"[test] auxiliary heads: " + ", ".join(f"{k2} acc {v['accuracy']:.4f}" for k2, v in aux_heads.items()))
     return metrics

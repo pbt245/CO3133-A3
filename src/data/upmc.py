@@ -26,7 +26,7 @@ from PIL import Image
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms as T
 
-from src.data.text import clean_title
+from src.data.text import ClassLexicon, clean_title
 from src.utils import paths
 from src.utils.io import load_json, resolve_path
 from src.utils.seed import seed_worker
@@ -101,7 +101,8 @@ class UPMCDataset(Dataset):
                  use_image: bool, use_text: bool, display_size: int = 224, resize: int = 256):
         self.df = df.reset_index(drop=True)
         self.ids = self.df["id"].tolist()
-        self.titles = self.df["title_clean"].tolist() if "title_clean" in self.df else [""] * len(self.df)
+        col = "title_model" if "title_model" in self.df else "title_clean"     # what the text encoder sees
+        self.titles = self.df[col].tolist() if col in self.df else [""] * len(self.df)
         self.labels = torch.tensor(self.df["label"].map(class_index).to_numpy(dtype=np.int64))
         self.has_img = torch.tensor(self.df["has_img"].astype(bool).to_numpy(dtype=np.float32))
         self.has_txt = torch.tensor(self.df["has_txt"].astype(bool).to_numpy(dtype=np.float32))
@@ -167,6 +168,8 @@ def build_datasets(cfg: dict, logger=None, sets=("train", "val", "test", "test_m
     use_text = use_text if need_text is None else need_text
 
     titles = read_titles(paths.upmc_root(dcfg.get("upmc_root"))).set_index("id")["title"]
+    mask_names = bool(cfg.get("text", {}).get("mask_class_names", False))
+    lexicon = ClassLexicon(classes) if mask_names else None
     img_root = paths.image_root(dcfg.get("image_root")) if use_image else None
     tokenizer = load_tokenizer(cfg) if use_text else None
     max_len = int(cfg.get("text", {}).get("max_length", 64))
@@ -179,6 +182,9 @@ def build_datasets(cfg: dict, logger=None, sets=("train", "val", "test", "test_m
             df = df[df["has_img"].astype(bool) & ~df["has_txt"].astype(bool)]
         df = df.copy()
         df["title_clean"] = [clean_title(titles.get(i, "")) for i in df["id"]]
+        # E2: every class-name mention replaced by [MASK] in train, val and test alike; title_clean keeps the
+        # original title for the test subsets (mention / no mention), which are defined on the real title
+        df["title_model"] = [lexicon.mask(t) for t in df["title_clean"]] if mask_names else df["title_clean"]
         return df
 
     spec = {"train": ("train", dcfg.get("train_on", "complete")), "val": ("val", "complete"),
@@ -187,7 +193,7 @@ def build_datasets(cfg: dict, logger=None, sets=("train", "val", "test", "test_m
     for name in sets:
         split, which = spec[name]
         df = subset(split, which)
-        tokens = tokenize(tokenizer, df["title_clean"], max_len) if use_text else None
+        tokens = tokenize(tokenizer, df["title_model"], max_len) if use_text else None
         tf = build_transforms(dcfg, train=(name == "train"))
         datasets[name] = UPMCDataset(df, class_index, img_root, tf, tokens, use_image, use_text,
                                      int(dcfg.get("image_size", 224)), int(dcfg.get("resize", 256)))
@@ -197,14 +203,20 @@ def build_datasets(cfg: dict, logger=None, sets=("train", "val", "test", "test_m
         "num_classes": len(classes),
         "image_size": int(dcfg.get("image_size", 224)),
         "image_root": str(img_root) if img_root is not None else None,
-        "use_image": use_image, "use_text": use_text, "max_length": max_len,
+        "use_image": use_image, "use_text": use_text, "max_length": max_len, "mask_class_names": mask_names,
         "split_file": str(resolve_path(dcfg["split_dir"]) / "split.json"),
         "split_fingerprints": info["fingerprints"],
         "set_fingerprints": {k: fingerprint(v.ids) for k, v in datasets.items()},
         "sizes": {k: len(v) for k, v in datasets.items()},
     }
+    if mask_names:
+        ds0 = next(iter(datasets.values()))
+        meta["masking"] = {"titles_changed": int(sum(a != b for a, b in zip(ds0.df["title_clean"], ds0.titles))),
+                           "titles": len(ds0), "residual_mentions": int(sum(bool(lexicon.mentions(t)) for t in ds0.titles)),
+                           "set": next(iter(datasets))}
     if logger is not None:
-        logger.info("Data: images %s | sizes %s", meta["image_root"], meta["sizes"])
+        logger.info("Data: images %s | sizes %s%s", meta["image_root"], meta["sizes"],
+                    f" | class names masked: {meta['masking']}" if mask_names else "")
     return datasets, meta
 
 

@@ -6,7 +6,7 @@ deterministic: false
 
 experiment:
   name: null                # run folder name
-  id: null                  # proposal ID: UA, UB, F1, (F2, E1, E2 in M3)
+  id: null                  # proposal ID: UA, UB, F1, F2, E1, E2-*, E4
   group: main
   mandatory: true
   reference: null
@@ -31,6 +31,7 @@ data:
 text:
   model_dir: auto           # distilbert-base-uncased folder (auto: weights/ or /kaggle/input, env A3_WEIGHTS_DIR)
   max_length: 64            # WordPiece tokens incl. [CLS]/[SEP]; batches are trimmed to their longest title
+  mask_class_names: false   # E2: replace every class-name mention by [MASK] (train, val and test)
 
 train:
   epochs: 10
@@ -42,7 +43,7 @@ train:
   amp_dtype: auto           # bf16 where supported (RTX PRO 6000), else fp16 + GradScaler (T4)
   early_stopping_patience: 3
   checkpoint_metric: val_macro_f1
-  freeze_encoders_epochs: 0 # > 0: encoders frozen for the first N epochs (stage 1 of the F2 strategy, M3)
+  freeze_encoders_epochs: 0 # > 0: encoders frozen for the first N epochs (stage 1 of the F2 strategy)
   max_hours: 0              # > 0: stop after the epoch crossing this budget (resume later with --resume)
   max_steps_per_epoch: 0    # > 0 only for timing runs / smoke tests
   show_progress: true

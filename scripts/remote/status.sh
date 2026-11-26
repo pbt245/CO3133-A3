@@ -15,6 +15,7 @@ print(f"   ({len(rows)} finished)")
 PY
 cur=$(ls -t outputs/runs/upmc/*/seed*/train.log 2>/dev/null | head -1)
 [ -n "$cur" ] && { echo "== latest run log: $cur"; grep -E "epoch|Best|test\]|Early|Error|error" "$cur" | tail -6; }
-echo "== master log (last 8 lines):"; tail -n 8 "$LOGS/m2_latest.log" 2>/dev/null
+latest=$(ls -t "$LOGS"/m*_latest.log 2>/dev/null | head -1)
+echo "== master log ${latest##*/} (last 8 lines):"; tail -n 8 "$latest" 2>/dev/null
 echo "== GPUs:"; nvidia-smi --query-gpu=index,memory.used,memory.total,utilization.gpu,temperature.gpu --format=csv,noheader
 echo "== disk /home: $(df -h "$A3_WORK" | awk 'NR==2{print $4" free"}')"

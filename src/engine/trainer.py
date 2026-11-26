@@ -1,4 +1,4 @@
-"""Training procedure shared by UA, UB and F1 (and F2 in M3): optimizer groups, warm-up + cosine schedule,
+"""Training procedure shared by UA, UB, F1 and F2: optimizer groups, warm-up + cosine schedule,
 mixed precision, validation every epoch, checkpoint selection, early stopping, resume.
 
 Checkpoint selection (identical for all models): the epoch with the best `train.checkpoint_metric` on the
@@ -168,6 +168,7 @@ def run_training(cfg: dict, run_dir, device: torch.device, logger, resume: bool 
                "train_loss": tr["loss"], "train_acc": tr["acc"],
                "val_loss": va["loss"], "val_acc": va_m["accuracy"], "val_macro_f1": va_m["macro_f1"],
                "val_top5": top_k_accuracy(va["y_true"], va["probs"], 5),
+               **{f"val_aux_{k}_acc": float((pa.argmax(1) == va["y_true"]).mean()) for k, pa in va["aux"].items()},
                "epoch_train_time_s": t_train, "epoch_val_time_s": t_val,
                "train_items_per_s": tr["n"] / t_train if t_train > 0 else float("nan")}
         history.append(row)

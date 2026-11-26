@@ -25,11 +25,29 @@ from src.engine.metrics import mcnemar_test
 from src.utils.io import load_json, resolve_path, save_json
 from src.viz.plots import _save, plt
 
-ORDER = ["k0_keyword", "ua_resnet50", "ub_distilbert", "f0_late_fusion", "f1_concat"]
-LABEL = {"k0_keyword": "K0 keyword rule", "ua_resnet50": "UA image (ResNet-50)", "ub_distilbert": "UB text (DistilBERT)",
-         "f0_late_fusion": "F0 late fusion", "f1_concat": "F1 concat fusion"}
-PAIRS = [("ub_distilbert", "k0_keyword"), ("ub_distilbert", "ua_resnet50"), ("f0_late_fusion", "ub_distilbert"),
-         ("f1_concat", "ub_distilbert"), ("f1_concat", "ua_resnet50"), ("f1_concat", "f0_late_fusion")]
+MAIN = ["k0_keyword", "t0_tfidf", "ua_resnet50", "ub_distilbert", "f0_late_fusion", "f1_concat", "f2_crossmodal"]
+ABLATIONS = ["f2_noaux", "f2_nomoddrop", "t0_tfidf_mask", "ub_distilbert_mask", "f0_late_fusion_mask", "f1_concat_mask",
+             "f2_crossmodal_mask"]
+ORDER = MAIN + ABLATIONS
+LABEL = {"k0_keyword": "K0 keyword rule", "t0_tfidf": "T0 TF-IDF + LR", "ua_resnet50": "UA image (ResNet-50)",
+         "ub_distilbert": "UB text (DistilBERT)", "f0_late_fusion": "F0 late fusion", "f1_concat": "F1 concat fusion",
+         "f2_crossmodal": "F2 cross-modal fusion", "f2_noaux": "E1: F2 without aux. losses",
+         "f2_nomoddrop": "E4: F2 without modality dropout", "t0_tfidf_mask": "E2: T0, class names masked",
+         "ub_distilbert_mask": "E2: UB, class names masked", "f0_late_fusion_mask": "E2: F0, class names masked",
+         "f1_concat_mask": "E2: F1, class names masked", "f2_crossmodal_mask": "E2: F2, class names masked"}
+PAIRS = [("ub_distilbert", "k0_keyword"), ("ub_distilbert", "t0_tfidf"), ("ub_distilbert", "ua_resnet50"),
+         ("f0_late_fusion", "ub_distilbert"), ("f1_concat", "ub_distilbert"), ("f1_concat", "ua_resnet50"),
+         ("f1_concat", "f0_late_fusion"),
+         # M3: improved fusion
+         ("f2_crossmodal", "ub_distilbert"), ("f2_crossmodal", "ua_resnet50"), ("f2_crossmodal", "f1_concat"),
+         ("f2_crossmodal", "f0_late_fusion"),
+         # E1, E4: F2 components
+         ("f2_crossmodal", "f2_noaux"), ("f2_crossmodal", "f2_nomoddrop"),
+         # E2: class names masked
+         ("ub_distilbert", "ub_distilbert_mask"), ("f1_concat", "f1_concat_mask"), ("f2_crossmodal", "f2_crossmodal_mask"),
+         ("ub_distilbert_mask", "ua_resnet50"), ("f0_late_fusion_mask", "ub_distilbert_mask"),
+         ("f1_concat_mask", "ub_distilbert_mask"), ("f2_crossmodal_mask", "ub_distilbert_mask"),
+         ("f2_crossmodal_mask", "f1_concat_mask"), ("f2_crossmodal_mask", "f0_late_fusion_mask")]
 
 
 def order_key(name):
@@ -140,6 +158,10 @@ def title_unseen(df, flags) -> pd.DataFrame:
         seen = flags.loc[list(ids), "title_seen"].to_numpy()
         k = int(max(y.max(), p.max()) + 1)
         for name, m in (("seen", seen), ("unseen", ~seen)):
+            if not m.any():                                   # (tiny smoke-test data only)
+                rows.append({"experiment": r.experiment, "seed": r.seed, "subset": name, "n": 0,
+                             "accuracy": np.nan, "macro_f1": np.nan})
+                continue
             cm = classification_metrics(y[m], p[m], max(k, 101))
             rows.append({"experiment": r.experiment, "seed": r.seed, "subset": name, "n": int(m.sum()),
                          "accuracy": cm["accuracy"], "macro_f1": cm["macro_f1"]})
@@ -159,7 +181,7 @@ def support_conflict(df, out: Path, flags=None):
     mention = flags.loc[list(ids), "mention_true"].to_numpy() if flags is not None else None
     seen = flags.loc[list(ids), "title_seen"].to_numpy() if flags is not None else None
     rows = []
-    fused = {e: preds(run(e))[2] for e in ("f0_late_fusion", "f1_concat") if run(e) is not None}
+    fused = {e: preds(run(e))[2] for e in ("f0_late_fusion", "f1_concat", "f2_crossmodal") if run(e) is not None}
     names = ["support", "conflict_I", "conflict_T", "both_wrong_agree", "both_wrong_disagree"]
     subsets = [("all", np.ones(len(y), bool))]
     if mention is not None:
@@ -179,8 +201,9 @@ def support_conflict(df, out: Path, flags=None):
     a = sc[sc.subset == "all"].set_index("group")
     fig, ax = plt.subplots(figsize=(9, 3.8))
     x = np.arange(len(names))
+    w = 0.8 / max(1, len(fused))
     for k, e in enumerate(fused):
-        ax.bar(x + (k - 0.5) * 0.38, a.loc[names, f"{e}_acc"], 0.38, label=LABEL.get(e, e))
+        ax.bar(x + (k - (len(fused) - 1) / 2) * w, a.loc[names, f"{e}_acc"], w, label=LABEL.get(e, e))
     ax.set_xticks(x)
     ax.set_xticklabels([f"{n}\n(n={a.loc[n, 'n']:,})" for n in names], fontsize=8)
     ax.set_ylabel("fusion accuracy (seed 42)")
@@ -215,7 +238,7 @@ def main():
     E = list(agg.index)
     L = lambda e: LABEL.get(e, e)
 
-    md = ["# M2 comparison - UPMC Food-101 (complete test pairs)", "",
+    md = ["# Comparison - UPMC Food-101 (complete test pairs)", "",
           "Mean ± std over seeds (percent). Test = complete test pairs (valid image + valid title). "
           "Dedup = without test items linked to an official-train image and without cross-label clusters.", ""]
     md += [md_table(["model", "seeds", "accuracy", "macro-F1", "top-5", "ECE", "dedup macro-F1", "val macro-F1"],
@@ -288,19 +311,22 @@ def main():
                "The same table split by class-name mention and by title seen / unseen is in support_conflict.csv.", ""]
 
     # figures
-    fig, ax = plt.subplots(figsize=(8, 3.6))
-    ax.bar([L(e) for e in E], 100 * agg["macro_f1_mean"], yerr=100 * agg["macro_f1_std"].fillna(0), capsize=4,
-           color=["#999", "tab:blue", "tab:orange", "tab:olive", "tab:green"][:len(E)])
-    for i, e in enumerate(E):
+    EM = [e for e in E if e in MAIN or e not in ABLATIONS]
+    color = {"k0_keyword": "#999", "t0_tfidf": "#bbb", "ua_resnet50": "tab:blue", "ub_distilbert": "tab:orange",
+             "f0_late_fusion": "tab:olive", "f1_concat": "tab:green", "f2_crossmodal": "tab:red"}
+    fig, ax = plt.subplots(figsize=(9, 3.6))
+    ax.bar([L(e) for e in EM], 100 * agg.loc[EM, "macro_f1_mean"], yerr=100 * agg.loc[EM, "macro_f1_std"].fillna(0),
+           capsize=4, color=[color.get(e, "tab:gray") for e in EM])
+    for i, e in enumerate(EM):
         ax.text(i, 100 * agg.loc[e, "macro_f1_mean"] + 1, f"{100 * agg.loc[e, 'macro_f1_mean']:.1f}", ha="center", fontsize=8)
     ax.set_ylabel("test macro-F1 (%)")
     ax.set_ylim(0, 100)
-    ax.tick_params(axis="x", labelsize=8)
+    ax.tick_params(axis="x", labelsize=7)
     ax.grid(axis="y", alpha=0.3)
     ax.set_title("UPMC Food-101, complete test pairs (mean ± std over seeds)")
     _save(fig, out / "macro_f1.png")
     fig, ax = plt.subplots(figsize=(7, 3.6))
-    for e in E:
+    for e in [e for e in EM if e in ("ua_resnet50", "ub_distilbert", "f1_concat", "f2_crossmodal")]:
         h = Path(df[(df.experiment == e)].sort_values("seed").run_dir.iloc[0]) / "history.csv"
         if h.exists():
             hh = pd.read_csv(h)

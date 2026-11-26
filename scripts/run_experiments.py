@@ -4,6 +4,9 @@
 Examples
   # M2: the two unimodal baselines and the simple fusion, 3 seeds
   python scripts/run_experiments.py --models ua_resnet50 ub_distilbert f1_concat --seeds 42 123 2026
+  # M3: improved fusion + ablations (configs/upmc/ablations/), in this order
+  python scripts/run_experiments.py --models f2_crossmodal ub_distilbert_mask f1_concat_mask f2_crossmodal_mask \
+      f2_noaux f2_nomoddrop --seeds 42 123 2026
   # extra overrides for every run
   python scripts/run_experiments.py --models ua_resnet50 --set data.num_workers=32 train.show_progress=false
 
@@ -22,7 +25,7 @@ sys.path.insert(0, str(ROOT))
 from src.utils.config import load_config
 from src.utils.io import resolve_path
 
-MAIN_ORDER = ["ua_resnet50", "ub_distilbert", "f1_concat"]
+MAIN_ORDER = ["ua_resnet50", "ub_distilbert", "f1_concat", "f2_crossmodal"]
 
 
 def find_configs(dataset: str, group: str):
@@ -62,6 +65,11 @@ def main():
     if not jobs:
         print("No matching experiments.")
         return
+    if args.models:                                  # run in the order given on the command line
+        unknown = sorted(set(args.models) - {j[2] for j in jobs})
+        if unknown:
+            sys.exit(f"Unknown experiments: {unknown}")
+        jobs.sort(key=lambda j: args.models.index(j[2]))
 
     results = []
     for i, (cfg_path, cfg, exp, seed) in enumerate(jobs, 1):

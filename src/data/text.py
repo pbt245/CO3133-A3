@@ -168,3 +168,29 @@ class ClassLexicon:
         for c, pos in ms:
             counts.setdefault(c, [0, pos])[0] += 1
         return max(counts.items(), key=lambda kv: (kv[1][0], -kv[1][1]))[0]
+
+    # ------------------------------------------------------------------ E2: class-name masking
+    def _raw_pattern(self):
+        """The lexicon variants as a regex on the *cleaned* title (accent-folded, lower-cased, same length), so
+        a mention can be replaced in the text the encoder sees, keeping its punctuation and the rest of the title.
+        Words of a variant may be separated by any non-alphanumeric run ('crab-cakes', 'mac & cheese')."""
+        if getattr(self, "_raw", None) is None:
+            def piece(variant):
+                words, out = variant.split(), ""
+                for i, w in enumerate(words):
+                    if i:                                   # '&' needs no spaces around it ("mac&cheese")
+                        out += r"[^a-z0-9]*" if "and" in (w, words[i - 1]) else r"[^a-z0-9]+"
+                    out += r"(?:and|&)" if w == "and" else re.escape(w)
+                return out
+            alts = sorted(self.variant_to_class, key=len, reverse=True)
+            self._raw = re.compile(r"(?<![a-z0-9])(?:" + "|".join(piece(a) for a in alts) + r")(?![a-z0-9])")
+        return self._raw
+
+    def mask(self, text, token: str = "[MASK]") -> str:
+        """Every class-name mention (any class, all variants) replaced by `token` (DistilBERT's [MASK])."""
+        t = clean_title(text)
+        folded = "".join((unicodedata.normalize("NFKD", ch)[:1].lower()[:1] or " ") for ch in t)
+        spans = [m.span() for m in self._raw_pattern().finditer(folded)]
+        for a, b in reversed(spans):
+            t = t[:a] + token + t[b:]
+        return t

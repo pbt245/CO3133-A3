@@ -1,0 +1,15 @@
+# E4 - [OPTIONAL]: F2 without modality dropout (p = 0). The [MISSING] tokens then never appear in training.
+base: ../f2_crossmodal.yaml
+
+experiment:
+  name: f2_nomoddrop
+  id: E4
+  group: ablation
+  mandatory: false
+  reference: f2_crossmodal
+  changed_factor: "model.modality_dropout: 0.15 -> 0"
+  hypothesis: "modality dropout helps when text is removed / uninformative, at <= 0.5 pp cost on complete pairs"
+  decision_criterion: "removal curves + decision rule on complete pairs"
+
+model:
+  modality_dropout: 0.0

@@ -33,3 +33,5 @@ outputs/runs/upmc/timing_*/
 outputs/runs/upmc/*/seed123/eval/examples_*.png
 outputs/runs/upmc/*/seed2026/eval/examples_*.png
 outputs/kaggle_out/
+# M3: conflict-review page (dataset thumbnails; only the verdict CSV in data/audit/ is committed)
+outputs/review/

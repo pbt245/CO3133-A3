@@ -6,9 +6,10 @@ import copy
 import torch
 import torch.nn as nn
 
-from src.models.classifiers import ConcatFusion, ImageOnly, TextOnly
+from src.models.classifiers import ConcatFusion, CrossModalFusion, ImageOnly, TextOnly
 
-MODELS = {"image_only": ImageOnly, "text_only": TextOnly, "concat_fusion": ConcatFusion}
+MODELS = {"image_only": ImageOnly, "text_only": TextOnly, "concat_fusion": ConcatFusion,
+          "crossmodal_fusion": CrossModalFusion}
 GROUP_PREFIXES = ("image_encoder", "text_encoder")       # everything else -> "head"
 
 

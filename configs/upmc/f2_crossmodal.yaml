@@ -1,0 +1,31 @@
+# F2 - improved fusion: cross-modal transformer over [FUS] + 49 image tokens + title tokens, auxiliary unimodal
+# losses (lambda 0.5), modality dropout (p 0.15) with learned [MISSING] tokens [MANDATORY]. Proposal section 5.1.
+# Stage 1 = 1 epoch with both encoders frozen (only the new layers learn), stage 2 = full fine-tuning.
+base: ../common.yaml
+
+experiment:
+  name: f2_crossmodal
+  id: F2
+
+model:
+  name: crossmodal_fusion
+  pretrained: true
+  d_model: 512
+  layers: 2
+  heads: 8
+  ffn_dim: 2048
+  dropout: 0.1
+  aux_weight: 0.5           # lambda; 0 = ablation E1 (heads become detached linear probes)
+  modality_dropout: 0.15    # 0 = ablation E4
+
+train:
+  freeze_encoders_epochs: 1
+
+scheduler:
+  warmup_ratio: 0.15        # 1.5 epochs: the encoders, unfrozen after epoch 1, also start with a warm-up
+
+optim:
+  groups:
+    image_encoder: {lr: 0.0001, weight_decay: 0.05}
+    text_encoder: {lr: 0.00003, weight_decay: 0.01}
+    head: {lr: 0.0005, weight_decay: 0.05}

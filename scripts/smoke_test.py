@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 """End-to-end smoke test on a tiny synthetic mirror (CPU, ~1-2 min, no downloads, no real data):
 prepare_data -> audit make/score -> eda -> train UA / UB / F1 (random-init ResNet-50 at 64 px, 1-layer DistilBERT
-with a toy vocabulary, 2 epochs x 3 steps) -> keyword baseline -> late fusion -> compare.
+with a toy vocabulary, 2 epochs x 3 steps) -> keyword baseline -> late fusion -> M3: F2 + E1 / E2 / E4 variants,
+masked F0, T0, removal predictions, qualitative panels, conflict review -> compare -> analysis_m3.
 It checks that the code runs and that files line up; the numbers mean nothing.
 
   python scripts/smoke_test.py --workdir /tmp/a3_smoke
@@ -110,7 +111,36 @@ def main():
          "--set", *common, "train.epochs=3"], env)                                    # resume path
     run(["scripts/keyword_baseline.py", "--set", f"data.split_dir={split_dir}", f"output.root={w / 'runs'}"], env)
     run(["scripts/late_fusion.py", "--runs", w / "runs/upmc", "--seeds", 42, 123], env)
-    run(["scripts/compare.py", "--runs", w / "runs/upmc", "--out", w / "comparison"], env)
+    # M3: F2 (frozen first epoch), E1 / E4 / E2 variants, then the M3 scripts
+    m3 = [("configs/upmc/f2_crossmodal.yaml", (42, 123)), ("configs/upmc/ablations/f2_noaux.yaml", (42,)),
+          ("configs/upmc/ablations/f2_nomoddrop.yaml", (42,)), ("configs/upmc/ablations/ub_distilbert_mask.yaml", (42, 123)),
+          ("configs/upmc/ablations/f2_crossmodal_mask.yaml", (42,))]
+    for cfg, seeds in m3:
+        for s in seeds:
+            run(["scripts/train.py", "--config", cfg, "--seed", s, "--overwrite", "--device", "cpu", "--set", *common,
+                 "train.freeze_encoders_epochs=1"], env)
+    runs = w / "runs/upmc"
+    run(["scripts/late_fusion.py", "--runs", runs, "--text", "ub_distilbert_mask", "--name", "f0_late_fusion_mask",
+         "--seeds", 42, 123], env)
+    for extra in ([], ["--mask"]):
+        run(["scripts/tfidf_baseline.py", *extra, "--grid", 1, "--set", f"data.split_dir={split_dir}",
+             f"output.root={w / 'runs'}"], env)
+    run(["scripts/removal_predictions.py", runs / "f1_concat/seed42", "--device", "cpu", "--set",
+         f"data.split_dir={split_dir}"], env)
+    run(["scripts/qualitative.py", "--runs", runs / "f2_crossmodal/seed42", runs / "f2_noaux/seed42",
+         "--image-run", runs / "ua_resnet50/seed42", "--text-run", runs / "ub_distilbert/seed42", "--out", w / "analysis",
+         "--per-group", 2, "--device", "cpu", "--set", f"data.split_dir={split_dir}"], env)
+    run(["scripts/conflict_review.py", "make", "--split-dir", split_dir, "--image-run", runs / "ua_resnet50/seed42",
+         "--text-run", runs / "ub_distilbert/seed42", "--fusion-run", runs / "f2_crossmodal/seed42", "--out",
+         w / "review", "--per-group", 2], env)
+    t = pd.read_csv(w / "review/conflict_review_template.csv")
+    t["verdict"] = (["title_generic", "image_unrelated", "wrong_label", "other"] * len(t))[:len(t)]
+    t.to_csv(w / "review/conflict_review.csv", index=False)
+    run(["scripts/conflict_review.py", "score", "--csv", w / "review/conflict_review.csv", "--out",
+         w / "review/summary.json"], env)
+    run(["scripts/compare.py", "--runs", runs, "--out", w / "comparison", "--meta-dir", meta_dir], env)
+    run(["scripts/analysis_m3.py", "--runs", runs, "--out", w / "analysis", "--split-dir", split_dir,
+         "--review", w / "review/summary.json"], env)
     print(f"\nSMOKE TEST PASSED -> {w}")
 
 
