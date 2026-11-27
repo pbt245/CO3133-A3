@@ -105,6 +105,7 @@ def make(args):
     order = rng.permutation(len(picks))
     sample = pd.DataFrame([picks[i] for i in order], columns=["id", "group"])
     root = paths.upmc_root(args.upmc_root)
+    img_root = paths.image_root(args.image_root)      # pre-resized upmc256 copy if present (as in training)
     titles = read_titles(root).set_index("id")["title"]
     out = Path(args.out)
     (out / "img").mkdir(parents=True, exist_ok=True)
@@ -112,7 +113,7 @@ def make(args):
     cards = []
     for k, r in enumerate(sample.itertuples(), 1):
         t = test.loc[r.id]
-        with Image.open(image_file(root, t.official_split, t.label, r.id)) as im:
+        with Image.open(image_file(img_root, t.official_split, t.label, r.id)) as im:
             im = im.convert("RGB")
             im.thumbnail((360, 360))
             im.save(out / "img" / f"{r.id}.jpg", quality=85)
@@ -155,7 +156,8 @@ def main():
     sub = p.add_subparsers(dest="cmd", required=True)
     m = sub.add_parser("make")
     m.add_argument("--split-dir", default="data/splits")
-    m.add_argument("--upmc-root", default="auto")
+    m.add_argument("--upmc-root", default="auto", help="mirror with texts/ (titles)")
+    m.add_argument("--image-root", default="auto", help="folder with images/ (default: upmc256 copy, else mirror)")
     m.add_argument("--image-run", default="outputs/runs/upmc/ua_resnet50/seed42")
     m.add_argument("--text-run", default="outputs/runs/upmc/ub_distilbert/seed42")
     m.add_argument("--fusion-run", default="outputs/runs/upmc/f2_crossmodal/seed42")
