@@ -1,0 +1,376 @@
+% ============================================================================
+%  CO3133 Assignment 3, final presentation (M3). Group G-roundhog.
+%  Build:  ./checkslides.sh slides.tex      (lualatex, needs slidekit.sty)
+%  Speaker copy with notes: \setbeameroption{show notes} in slidekit.sty.
+% ============================================================================
+\documentclass[8pt,aspectratio=169]{beamer}
+\usepackage{slidekit}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta}
+
+\title{Multimodal Recipe Classification}
+\subtitle{UPMC Food-101: one web image and its page title, 101 dishes}
+\author{Phan Bá Thanh \quad Trần Công Hoàng Phước \quad\gray{Group G-roundhog}}
+\date{\gray{CO3133 Deep Learning and Its Applications, Semester 261, Assignment 3 (M3)}}
+
+\begin{document}
+
+\titleframe
+
+\begin{frame}{Outline}
+  \renewcommand{\arraystretch}{2.4}
+  \makebox[\textwidth]{%
+  \begin{tabular}{@{}r@{\hspace{1.4em}}l@{\hspace{2.4em}}l@{}}
+    \gray{1} & Problem and data & $79\%$ of titles name the class \\
+    \gray{2} & Models           & UA, UB, F0, F1 and the new \K{F2} \\
+    \gray{3} & Results          & F2 $>$ F1, F2 $\approx$ F0, F2 best on masked titles \\
+    \gray{4} & Analysis         & conflicts, attention, error taxonomy \\
+  \end{tabular}}
+\end{frame}
+
+% ===========================================================================
+\section{Problem and data}
+% ===========================================================================
+
+\begin{frame}{Task}
+  \takeaway{Input: one web image + the page title. Output: one of 101 dishes.}
+
+  \fig{pairs}
+
+  \showtakeaway
+  \note{UPMC Food-101, Kaggle mirror with titles only. Complete pairs: 62,771 train,
+    4,824 val, 22,594 test. Image and title come from the same recipe page. Split grouped by
+    image-duplicate clusters. Manual audit of 200 pairs: 81.5 \% valid, 0.5 \% wrong labels.}
+\end{frame}
+
+\begin{frame}{Two leaks}
+  \takeaway{The title often names the label: every claim is also checked on masked and unseen titles.}
+
+  \makebox[\textwidth]{%
+  \slidetable
+  \begin{tabular}{@{}llr@{}}
+    \toprule
+    \headrow
+    Leak & Effect & Size \\
+    \midrule
+    class name in the title & ``\textless class\textgreater{} recipe'' search query & $79\%$ of titles \\
+    same title in train and test & several images of one page & $39\%$ of test titles \\
+    same image in train and test & near-duplicate photos & $14.5\%$ of test images \\
+    \midrule
+    \K{Control} & E2 masks class names; \emph{title-unseen} and \emph{dedup} test views & \\
+    \bottomrule
+  \end{tabular}}
+
+  \showtakeaway
+  \note{Keyword rule K0 alone: 77 \% accuracy. Title-unseen view: 13,701 test items whose title
+    never occurs in train or val. Dedup view: 19,270 items without a train-linked image.}
+\end{frame}
+
+% ===========================================================================
+\section{Models}
+% ===========================================================================
+
+\begin{frame}{Models}
+  \takeaway{Two unimodal baselines, three fusions, two text references; 3 seeds each.}
+
+  \makebox[\textwidth]{%
+  \slidetable
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    \headrow
+    ID & Model & Fusion \\
+    \midrule
+    UA & ResNet-50, image only & none \\
+    UB & DistilBERT, title only & none \\
+    K0 / T0 & keyword rule / TF-IDF + logistic regression & none \\
+    F0 & late: $w\,p_{\text{UA}} + (1-w)\,p_{\text{UB}}$ & output averaging \\
+    F1 & concat of two pooled vectors $\to$ MLP & intermediate \\
+    \K{F2} & cross-modal transformer + aux.\ losses + modality dropout & token level \\
+    \bottomrule
+  \end{tabular}}
+
+  \showtakeaway
+  \note{All models: same split, same protocol. Seeds 42, 123, 2026. Selection: best val
+    macro-F1. Decision rule: mean macro-F1 difference larger than the larger seed std AND
+    McNemar p < 0.05 on seed 42.}
+\end{frame}
+
+\begin{frame}{Why a new fusion}
+  \takeaway{M2: F1 lets the title do all the work, and its image branch stays weak.}
+
+  \makebox[\textwidth]{%
+  \slidetable
+  \begin{tabular}{@{}lrr@{}}
+    \toprule
+    \headrow
+    Accuracy (\%) & F1 & reference \\
+    \midrule
+    training set & $99.7$ & \\
+    title removed at test time & \F{$53.3$} & UA image only: $70.7$ \\
+    only the image model right (Conflict-I) & \F{$72.1$} & F0: $92.7$ \\
+    \bottomrule
+  \end{tabular}}
+
+  \showtakeaway
+  \note{Modality laziness (Wang et al. 2020): the title alone fits the training labels, so the
+    joint loss stops pushing the image encoder. F2 is built to fix exactly this.}
+\end{frame}
+
+\begin{frame}{F2: cross-modal fusion}
+  \takeaway{Region and word tokens attend to each other; aux.\ losses and modality dropout keep both encoders working.}
+
+  \dia{%
+  \begin{tikzpicture}[every node/.style={font=\normalsize},
+      box/.style={draw=key, rounded corners, align=center, minimum height=9mm, inner sep=4pt, fill=white},
+      aux/.style={draw=foil, dashed, rounded corners, align=center, inner sep=3pt},
+      >={Stealth}]
+    \node[box] (img) at (0,0) {image};
+    \node[box] (rn)  at (2.8,0) {ResNet-50\\49 regions};
+    \node[box] (txt) at (0,-2.4) {title};
+    \node[box] (db)  at (2.8,-2.4) {DistilBERT\\word tokens};
+    \node[box, fill=paper, minimum height=26mm, minimum width=30mm] (tf) at (7.2,-1.2) {2 transformer\\layers};
+    \node[box] (fus) at (7.2,1.0) {\texttt{[FUS]} token};
+    \node[box] (out) at (10.6,-1.2) {101 dishes};
+    \node[aux] (ai) at (2.8,1.4) {aux.\ image head};
+    \node[aux] (at) at (2.8,-3.8) {aux.\ title head};
+    \node[aux] (md) at (7.2,-3.6) {15\%: drop one modality\\$\to$ \texttt{[MISSING]}};
+    \draw[->] (img) -- (rn); \draw[->] (txt) -- (db);
+    \draw[->] (rn) -- (tf.west |- rn); \draw[->] (db) -- (tf.west |- db);
+    \draw[->] (fus) -- (tf); \draw[->] (tf) -- (out);
+    \draw[->, foil, dashed] (rn) -- (ai); \draw[->, foil, dashed] (db) -- (at);
+    \draw[->, foil, dashed] (md) -- (tf);
+  \end{tikzpicture}}
+
+  \showtakeaway
+  \note{Image tokens: ResNet-50 layer4, 7x7 = 49 regions, projected to 512, learned position.
+    Title tokens: DistilBERT hidden states projected to 512. Two pre-LN layers, 8 heads.
+    Loss = CE(fused) + 0.5 (CE(image head) + CE(title head)). Epoch 1 with frozen encoders.
+    98.0 M parameters, 5.06 GMACs per item (F1: 4.73).}
+\end{frame}
+
+\begin{frame}{Controlled experiments}
+  \takeaway{Each experiment changes one factor and keeps the split and the seeds.}
+
+  \makebox[\textwidth]{%
+  \slidetable
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    \headrow
+    ID & Change & Question \\
+    \midrule
+    E1 & no auxiliary losses ($\lambda = 0$) & do they keep the image branch alive? \\
+    E4 & no modality dropout ($p = 0$) & robustness to a missing modality? \\
+    E2 & class names $\to$ \texttt{[MASK]} in all titles & what is left without the label leak? \\
+    E-mod & remove title or image from $0$--$100\%$ of test pairs & how fast does each model degrade? \\
+    \bottomrule
+  \end{tabular}}
+
+  \showtakeaway
+  \note{E1: aux heads still trained on detached features, as linear probes, so we can measure
+    the encoders. E2: retrain UB, T0, F0, F1, F2 on masked titles; 79.8 \% of train titles change,
+    0 residual mentions. 18 new runs on the lab RTX A6000, about 5.7 GPU-hours.}
+\end{frame}
+
+% ===========================================================================
+\section{Results}
+% ===========================================================================
+
+\begin{frame}{Main result}
+  \takeaway{Every fusion beats every single modality by 6 to 7 points of macro-F1.}
+
+  \fig{macro_f1}
+
+  \showtakeaway
+  \note{Test complete pairs, 22,594 items, mean and std over 3 seeds. Same ranking on the dedup
+    and title-unseen views. T0 slightly beats UB: short titles that mostly name the dish do not
+    need a transformer.}
+\end{frame}
+
+\begin{frame}{Decision rule}
+  \takeaway{F2 beats F1, but ties the late fusion F0.}
+
+  \makebox[\textwidth]{%
+  \slidetable
+  \begin{tabular}{@{}lrrrl@{}}
+    \toprule
+    \headrow
+    A vs B & $\Delta$ macro-F1 & larger std & McNemar $p$ & verdict \\
+    \midrule
+    F2 vs UB & $+6.73$ & $0.25$ & $< 10^{-300}$ & F2 better \\
+    F1 vs F0 & $-1.06$ & $0.24$ & $1.5\cdot10^{-8}$ & F0 better \\
+    F2 vs F1 & $+0.73$ & $0.07$ & $2.3\cdot10^{-9}$ & \K{F2 better} \\
+    F2 vs F0 & $-0.33$ & $0.24$ & $0.50$ & \F{no decision} \\
+    \bottomrule
+  \end{tabular}}
+
+  \showtakeaway
+  \note{Rule: difference of mean macro-F1 larger than the larger seed std, and McNemar p < 0.05 on
+    seed 42. F2 vs F0: 465 vs 487 discordant items. With two strong unimodal models and
+    informative titles, averaging probabilities is a hard baseline. F2 is also the best
+    calibrated model: ECE 2.9 \%, 0.45 \% after temperature scaling; F0 is 16.0 \%.}
+\end{frame}
+
+\begin{frame}{E1: auxiliary losses}
+  \takeaway{Without the auxiliary losses the image encoder weakens: $-7.4$ points on its own.}
+
+  \makebox[\textwidth]{%
+  \slidetable
+  \begin{tabular}{@{}lrrr@{}}
+    \toprule
+    \headrow
+    & macro-F1 & image head acc. & acc.\ title removed \\
+    \midrule
+    F2 ($\lambda = 0.5$) & $93.53$ & \K{$69.7$} & $65.3$ \\
+    E1 ($\lambda = 0$)   & $93.07$ & $62.3$ & $58.6$ \\
+    \midrule
+    \gray{UA image only} & \gray{$70.8$} & \gray{$70.7$} & \\
+    \bottomrule
+  \end{tabular}}
+
+  \showtakeaway
+  \note{Decision rule: F2 better, +0.46 pp, std 0.08, McNemar p = 3e-7. The image head of F2 is as
+    good as the standalone ResNet-50; the linear probe on E1's image features is 7 points worse.
+    Text head: 87.1 vs 76.8. This is the modality laziness of F1, measured directly.}
+\end{frame}
+
+\begin{frame}{Missing title}
+  \takeaway{Aux.\ losses and modality dropout each add 5 to 7 points; F0 still degrades best.}
+
+  \fig{removal_title}
+
+  \showtakeaway
+  \note{Title removed from a random fraction of test pairs, no retraining. Lines are linear by
+    construction; read the end points. 100 \% removed: F0 70.8 (falls back to UA), F2 65.3,
+    E4 60.1, E1 58.5, F1 52.5. E4 vs F2 on complete pairs: +0.08, no decision, so modality dropout
+    is free. Removing the image instead costs every fusion about 7 points.}
+\end{frame}
+
+\begin{frame}{E2: class names masked}
+  \takeaway{Masking halves the text model; then F2 is the best fusion, 2.5 points above F0.}
+
+  \makebox[\textwidth]{%
+  \slidetable
+  \begin{tabular}{@{}lrrr@{}}
+    \toprule
+    \headrow
+    macro-F1 & titles as is & names masked & gain over UB, masked \\
+    \midrule
+    UB text & $86.8$ & \F{$43.7$} & \\
+    F0 late & $93.9$ & $78.9$ & $+35.2$ \\
+    F1 concat & $92.8$ & $80.4$ & $+36.7$ \\
+    F2 cross-modal & $93.5$ & \K{$81.3$} & $+37.6$ \\
+    \bottomrule
+  \end{tabular}}
+
+  \showtakeaway
+  \note{F2-mask vs F0-mask: +2.46, p = 2e-28. F2-mask vs F1-mask: +0.88, p = 2e-4. T0 masked: 47.8.
+    On titles that never named the class, UB scores 39.2 vs 39.7 masked: the mask removes the name
+    and nothing else. When no modality is decisive, token-level attention combines partial
+    evidence better than averaging two probability vectors.}
+\end{frame}
+
+% ===========================================================================
+\section{Analysis}
+% ===========================================================================
+
+\begin{frame}{Support and conflict}
+  \takeaway{The gain is in the conflicts: F2 fixes more misleading titles than F1, F0 still the most.}
+
+  \fig{support_conflict}
+
+  \showtakeaway
+  \note{Groups from UA and UB of the same seed, 3 seeds. Conflict-I = only the image model right
+    (9 \% of items): F0 90.6, F2 75.3, F1 69.0. Conflict-T: all fusions about 97 to 98. Only the
+    trained fusions solve some items where both unimodal models are wrong (F2 24 \%). Right panel,
+    masked titles: Conflict-I grows to 40 \%, and F2-mask leads on Conflict-T (85.7 vs 75.9).}
+\end{frame}
+
+\begin{frame}{Inside F2}
+  \takeaway{Uninformative titles get almost no attention, so F2 decides from the image.}
+
+  \fig{qual_conflict_I}
+
+  \showtakeaway
+  \note{Conflict-I examples, seed 42. Grad-CAM of F2's image encoder for its prediction.
+    [FUS] attention on image tokens: 0.91 on Conflict-I, 0.78 on Conflict-T. Compare between
+    groups only: 49 image tokens vs about 15 title tokens, so uniform attention would give 0.75.}
+\end{frame}
+
+\begin{frame}{Why the unimodal models fail}
+  \takeaway{Generic titles are easy to fix; a title that names another dish is not.}
+
+  \makebox[\textwidth]{%
+  \slidetable
+  \begin{tabular}{@{}llrrrr@{}}
+    \toprule
+    \headrow
+    failing model & main cause & items & F0 & F1 & F2 \\
+    \midrule
+    text  & title generic (``Hello'', site name) & $42$ & $100$ & $74$ & $93$ \\
+    text  & title names another dish & $8$ & \F{$50$} & \F{$38$} & \F{$50$} \\
+    image & looks like another dish & $34$ & $94$ & $94$ & $100$ \\
+    image & image unrelated / wrong label / other & $16$ & $100$ & $100$ & $100$ \\
+    \bottomrule
+  \end{tabular}}
+
+  \showtakeaway
+  \note{100 random conflict items, seed 42, labelled by hand: Thanh 1-50, Phuoc 51-100.
+    Example of the hard case: ``French Bread Pizza'' on a pizza photo, read as garlic bread.
+    28 \% of the reviewed titles also occur in train: ``- quoteko.com'' is breakfast burrito in
+    77 of 80 train items. Small sample: Wilson 95 \% CI of the 84 \% generic share is 71 to 92 \%.}
+\end{frame}
+
+\begin{frame}{Cost}
+  \takeaway{F2's improvement is cheap: $+7\%$ compute over F1, same training time.}
+
+  \makebox[\textwidth]{%
+  \slidetable
+  \begin{tabular}{@{}lrrrr@{}}
+    \toprule
+    \headrow
+    & params & GMACs / item & train / run & latency (batch 1) \\
+    \midrule
+    UA & $23.7$\,M & $4.09$ & $14.4$ min & $4.7$ ms \\
+    UB & $66.4$\,M & $0.64$ & $2.0$ min & $2.7$ ms \\
+    F1 & $91.9$\,M & $4.73$ & $18.4$ min & $7.7$ ms \\
+    F2 & $98.0$\,M & $5.06$ & $18.6$ min & $8.5$ ms \\
+    \bottomrule
+  \end{tabular}}
+
+  \showtakeaway
+  \note{RTX A6000 48 GB, shared lab machine, bf16. F0 costs UA + UB at inference and needs no
+    extra training. Whole assignment: M2 2.0 GPU-hours, M3 about 5.7 GPU-hours.}
+\end{frame}
+
+\begin{frame}{Conclusions}
+  \takeaway{Use F0 for informative titles; use F2 when the text is weak or confidence must be calibrated.}
+
+  \begin{itemize}\setlength\itemsep{1.0em}
+    \item fusion: $+6$ to $7$ points over the best single modality
+    \item title: strong but leaky; check masked and unseen titles
+    \item F2: beats F1, image branch kept alive, robust to a missing title
+    \item F2 vs F0: tie on plain titles, \K{F2 $+2.5$} with names masked
+    \item open problem: titles that name another dish
+  \end{itemize}
+
+  \showtakeaway
+  \note{Next steps: a food-pretrained image encoder (A2), image-text contrastive pretraining, and
+    a split with titles deduplicated across train and test.}
+\end{frame}
+
+\begin{frame}[plain]{}
+  \takeaway{Fusion beats each modality by 6 to 7 points; the cross-modal F2 wins when the title stops naming the dish.}
+
+  \makebox[\textwidth]{%
+  \renewcommand{\arraystretch}{1.8}
+  \begin{tabular}{@{}ll@{}}
+    Code & \texttt{github.com/pbt245/CO3133-A3} \\
+    Report and slides & \texttt{docs/a3-report/main.pdf}, \texttt{docs/a3-slides/slides.pdf} \\
+    Checkpoints & \texttt{kaggle.com/datasets/bathanhphan/co3133-a3-m3-checkpoints} \\
+    Group G-roundhog & Phan Bá Thanh (2353084), Trần Công Hoàng Phước (2352966) \\
+  \end{tabular}}
+
+  \showtakeaway
+\end{frame}
+
+\end{document}

@@ -1,0 +1,1021 @@
+{
+  "run_id": "upmc-f1_concat_mask-s42-20261126-095748",
+  "dataset": "upmc",
+  "experiment": "f1_concat_mask",
+  "experiment_id": "E2-F1",
+  "model": "concat_fusion",
+  "seed": 42,
+  "split": "test (complete pairs)",
+  "loss": 1.107668016730784,
+  "n_samples": 22594,
+  "accuracy": 0.8053465521819952,
+  "macro_f1": 0.8050972885523745,
+  "weighted_f1": 0.8052900843216259,
+  "top5_accuracy": 0.9277241745596176,
+  "ece": 0.11019141743607765,
+  "calibration_bins": [
+    {
+      "bin_low": 0.13333333333333333,
+      "bin_high": 0.2,
+      "count": 7,
+      "accuracy": 0.2857142857142857,
+      "confidence": 0.1682904064655304
+    },
+    {
+      "bin_low": 0.2,
+      "bin_high": 0.26666666666666666,
+      "count": 69,
+      "accuracy": 0.07246376811594203,
+      "confidence": 0.2412925660610199
+    },
+    {
+      "bin_low": 0.26666666666666666,
+      "bin_high": 0.3333333333333333,
+      "count": 163,
+      "accuracy": 0.1656441717791411,
+      "confidence": 0.30522796511650085
+    },
+    {
+      "bin_low": 0.3333333333333333,
+      "bin_high": 0.4,
+      "count": 275,
+      "accuracy": 0.20727272727272728,
+      "confidence": 0.3715292513370514
+    },
+    {
+      "bin_low": 0.4,
+      "bin_high": 0.4666666666666667,
+      "count": 379,
+      "accuracy": 0.23482849604221637,
+      "confidence": 0.43554654717445374
+    },
+    {
+      "bin_low": 0.4666666666666667,
+      "bin_high": 0.5333333333333333,
+      "count": 551,
+      "accuracy": 0.3030852994555354,
+      "confidence": 0.5030023455619812
+    },
+    {
+      "bin_low": 0.5333333333333333,
+      "bin_high": 0.6,
+      "count": 559,
+      "accuracy": 0.3542039355992844,
+      "confidence": 0.5667968988418579
+    },
+    {
+      "bin_low": 0.6,
+      "bin_high": 0.6666666666666666,
+      "count": 554,
+      "accuracy": 0.3862815884476534,
+      "confidence": 0.6333657503128052
+    },
+    {
+      "bin_low": 0.6666666666666666,
+      "bin_high": 0.7333333333333333,
+      "count": 548,
+      "accuracy": 0.41788321167883213,
+      "confidence": 0.699263870716095
+    },
+    {
+      "bin_low": 0.7333333333333333,
+      "bin_high": 0.8,
+      "count": 630,
+      "accuracy": 0.4777777777777778,
+      "confidence": 0.766478419303894
+    },
+    {
+      "bin_low": 0.8,
+      "bin_high": 0.8666666666666667,
+      "count": 761,
+      "accuracy": 0.533508541392904,
+      "confidence": 0.8355372548103333
+    },
+    {
+      "bin_low": 0.8666666666666667,
+      "bin_high": 0.9333333333333333,
+      "count": 1061,
+      "accuracy": 0.6088595664467483,
+      "confidence": 0.9027711749076843
+    },
+    {
+      "bin_low": 0.9333333333333333,
+      "bin_high": 1.0,
+      "count": 17037,
+      "accuracy": 0.9306215883078006,
+      "confidence": 0.9945740699768066
+    }
+  ],
+  "bootstrap_ci": {
+    "accuracy": [
+      0.8004337434717181,
+      0.810436399043994
+    ],
+    "macro_f1": [
+      0.799790101500055,
+      0.8097802421621587
+    ],
+    "n_boot": 1000,
+    "confidence": 0.95
+  },
+  "subsets": {
+    "dedup": {
+      "n_samples": 19270,
+      "accuracy": 0.7894135962636222,
+      "macro_f1": 0.7894846998053345,
+      "top5_accuracy": 0.9206538661131293
+    },
+    "mention_true": {
+      "n_samples": 17812,
+      "accuracy": 0.8178194475634404,
+      "macro_f1": 0.8154970566224968,
+      "top5_accuracy": 0.935773635751179
+    },
+    "no_mention_true": {
+      "n_samples": 4782,
+      "accuracy": 0.7588874947720619,
+      "macro_f1": 0.7198159909445826,
+      "top5_accuracy": 0.8977415307402761
+    },
+    "mention_other": {
+      "n_samples": 1051,
+      "accuracy": 0.6403425309229306,
+      "macro_f1": 0.5508690208881489,
+      "top5_accuracy": 0.8763082778306375
+    }
+  },
+  "per_class": [
+    {
+      "class": "apple_pie",
+      "precision": 0.7364016736401674,
+      "recall": 0.7586206896551724,
+      "f1": 0.7473460721868365,
+      "support": 232
+    },
+    {
+      "class": "baby_back_ribs",
+      "precision": 0.8095238095238095,
+      "recall": 0.8538812785388128,
+      "f1": 0.8311111111111111,
+      "support": 219
+    },
+    {
+      "class": "baklava",
+      "precision": 0.8189300411522634,
+      "recall": 0.8923766816143498,
+      "f1": 0.8540772532188842,
+      "support": 223
+    },
+    {
+      "class": "beef_carpaccio",
+      "precision": 0.7982062780269058,
+      "recall": 0.8018018018018018,
+      "f1": 0.8,
+      "support": 222
+    },
+    {
+      "class": "beef_tartare",
+      "precision": 0.71,
+      "recall": 0.6425339366515838,
+      "f1": 0.6745843230403801,
+      "support": 221
+    },
+    {
+      "class": "beet_salad",
+      "precision": 0.831858407079646,
+      "recall": 0.8468468468468469,
+      "f1": 0.8392857142857143,
+      "support": 222
+    },
+    {
+      "class": "beignets",
+      "precision": 0.7767857142857143,
+      "recall": 0.7873303167420814,
+      "f1": 0.7820224719101123,
+      "support": 221
+    },
+    {
+      "class": "bibimbap",
+      "precision": 0.8691588785046729,
+      "recall": 0.8340807174887892,
+      "f1": 0.851258581235698,
+      "support": 223
+    },
+    {
+      "class": "bread_pudding",
+      "precision": 0.7981220657276995,
+      "recall": 0.7555555555555555,
+      "f1": 0.776255707762557,
+      "support": 225
+    },
+    {
+      "class": "breakfast_burrito",
+      "precision": 0.8256410256410256,
+      "recall": 0.755868544600939,
+      "f1": 0.7892156862745098,
+      "support": 213
+    },
+    {
+      "class": "bruschetta",
+      "precision": 0.7815126050420168,
+      "recall": 0.8122270742358079,
+      "f1": 0.7965738758029979,
+      "support": 229
+    },
+    {
+      "class": "caesar_salad",
+      "precision": 0.8772727272727273,
+      "recall": 0.8539823008849557,
+      "f1": 0.8654708520179372,
+      "support": 226
+    },
+    {
+      "class": "cannoli",
+      "precision": 0.8440366972477065,
+      "recall": 0.8,
+      "f1": 0.8214285714285714,
+      "support": 230
+    },
+    {
+      "class": "caprese_salad",
+      "precision": 0.8409090909090909,
+      "recall": 0.8525345622119815,
+      "f1": 0.8466819221967964,
+      "support": 217
+    },
+    {
+      "class": "carrot_cake",
+      "precision": 0.824390243902439,
+      "recall": 0.7316017316017316,
+      "f1": 0.7752293577981652,
+      "support": 231
+    },
+    {
+      "class": "ceviche",
+      "precision": 0.8230088495575221,
+      "recall": 0.8193832599118943,
+      "f1": 0.8211920529801324,
+      "support": 227
+    },
+    {
+      "class": "cheese_plate",
+      "precision": 0.7752293577981652,
+      "recall": 0.7612612612612613,
+      "f1": 0.7681818181818182,
+      "support": 222
+    },
+    {
+      "class": "cheesecake",
+      "precision": 0.7391304347826086,
+      "recall": 0.8060344827586207,
+      "f1": 0.7711340206185567,
+      "support": 232
+    },
+    {
+      "class": "chicken_curry",
+      "precision": 0.7479338842975206,
+      "recall": 0.8153153153153153,
+      "f1": 0.7801724137931034,
+      "support": 222
+    },
+    {
+      "class": "chicken_quesadilla",
+      "precision": 0.7952380952380952,
+      "recall": 0.7695852534562212,
+      "f1": 0.7822014051522248,
+      "support": 217
+    },
+    {
+      "class": "chicken_wings",
+      "precision": 0.875,
+      "recall": 0.8949771689497716,
+      "f1": 0.8848758465011287,
+      "support": 219
+    },
+    {
+      "class": "chocolate_cake",
+      "precision": 0.8306451612903226,
+      "recall": 0.8917748917748918,
+      "f1": 0.860125260960334,
+      "support": 231
+    },
+    {
+      "class": "chocolate_mousse",
+      "precision": 0.7955555555555556,
+      "recall": 0.7991071428571429,
+      "f1": 0.7973273942093542,
+      "support": 224
+    },
+    {
+      "class": "churros",
+      "precision": 0.8739130434782608,
+      "recall": 0.8854625550660793,
+      "f1": 0.8796498905908097,
+      "support": 227
+    },
+    {
+      "class": "clam_chowder",
+      "precision": 0.8565022421524664,
+      "recall": 0.8526785714285714,
+      "f1": 0.854586129753915,
+      "support": 224
+    },
+    {
+      "class": "club_sandwich",
+      "precision": 0.7777777777777778,
+      "recall": 0.863013698630137,
+      "f1": 0.8181818181818182,
+      "support": 219
+    },
+    {
+      "class": "crab_cakes",
+      "precision": 0.7310924369747899,
+      "recall": 0.7945205479452054,
+      "f1": 0.7614879649890591,
+      "support": 219
+    },
+    {
+      "class": "creme_brulee",
+      "precision": 0.9090909090909091,
+      "recall": 0.8968609865470852,
+      "f1": 0.9029345372460497,
+      "support": 223
+    },
+    {
+      "class": "croque_madame",
+      "precision": 0.7964601769911505,
+      "recall": 0.8071748878923767,
+      "f1": 0.8017817371937639,
+      "support": 223
+    },
+    {
+      "class": "cup_cakes",
+      "precision": 0.8036529680365296,
+      "recall": 0.7787610619469026,
+      "f1": 0.7910112359550562,
+      "support": 226
+    },
+    {
+      "class": "deviled_eggs",
+      "precision": 0.9605263157894737,
+      "recall": 0.9563318777292577,
+      "f1": 0.9584245076586433,
+      "support": 229
+    },
+    {
+      "class": "donuts",
+      "precision": 0.7729257641921398,
+      "recall": 0.7695652173913043,
+      "f1": 0.7712418300653595,
+      "support": 230
+    },
+    {
+      "class": "dumplings",
+      "precision": 0.7669491525423728,
+      "recall": 0.793859649122807,
+      "f1": 0.7801724137931034,
+      "support": 228
+    },
+    {
+      "class": "edamame",
+      "precision": 0.7899543378995434,
+      "recall": 0.7554585152838428,
+      "f1": 0.7723214285714286,
+      "support": 229
+    },
+    {
+      "class": "eggs_benedict",
+      "precision": 0.8341232227488151,
+      "recall": 0.8341232227488151,
+      "f1": 0.8341232227488151,
+      "support": 211
+    },
+    {
+      "class": "escargots",
+      "precision": 0.8387096774193549,
+      "recall": 0.7761194029850746,
+      "f1": 0.8062015503875969,
+      "support": 201
+    },
+    {
+      "class": "falafel",
+      "precision": 0.759493670886076,
+      "recall": 0.7894736842105263,
+      "f1": 0.7741935483870968,
+      "support": 228
+    },
+    {
+      "class": "filet_mignon",
+      "precision": 0.7391304347826086,
+      "recall": 0.7285714285714285,
+      "f1": 0.7338129496402878,
+      "support": 210
+    },
+    {
+      "class": "fish_and_chips",
+      "precision": 0.7611940298507462,
+      "recall": 0.7355769230769231,
+      "f1": 0.7481662591687042,
+      "support": 208
+    },
+    {
+      "class": "foie_gras",
+      "precision": 0.700507614213198,
+      "recall": 0.641860465116279,
+      "f1": 0.6699029126213593,
+      "support": 215
+    },
+    {
+      "class": "french_fries",
+      "precision": 0.8423645320197044,
+      "recall": 0.8066037735849056,
+      "f1": 0.8240963855421687,
+      "support": 212
+    },
+    {
+      "class": "french_onion_soup",
+      "precision": 0.8170212765957446,
+      "recall": 0.8648648648648649,
+      "f1": 0.8402625820568927,
+      "support": 222
+    },
+    {
+      "class": "french_toast",
+      "precision": 0.7642276422764228,
+      "recall": 0.7899159663865546,
+      "f1": 0.7768595041322314,
+      "support": 238
+    },
+    {
+      "class": "fried_calamari",
+      "precision": 0.848780487804878,
+      "recall": 0.8207547169811321,
+      "f1": 0.8345323741007195,
+      "support": 212
+    },
+    {
+      "class": "fried_rice",
+      "precision": 0.7549407114624506,
+      "recall": 0.834061135371179,
+      "f1": 0.7925311203319502,
+      "support": 229
+    },
+    {
+      "class": "frozen_yogurt",
+      "precision": 0.75,
+      "recall": 0.8111587982832618,
+      "f1": 0.7793814432989691,
+      "support": 233
+    },
+    {
+      "class": "garlic_bread",
+      "precision": 0.7808219178082192,
+      "recall": 0.7633928571428571,
+      "f1": 0.7720090293453724,
+      "support": 224
+    },
+    {
+      "class": "gnocchi",
+      "precision": 0.7673469387755102,
+      "recall": 0.8034188034188035,
+      "f1": 0.7849686847599165,
+      "support": 234
+    },
+    {
+      "class": "greek_salad",
+      "precision": 0.7745901639344263,
+      "recall": 0.8513513513513513,
+      "f1": 0.8111587982832618,
+      "support": 222
+    },
+    {
+      "class": "grilled_cheese_sandwich",
+      "precision": 0.8169642857142857,
+      "recall": 0.8026315789473685,
+      "f1": 0.8097345132743363,
+      "support": 228
+    },
+    {
+      "class": "grilled_salmon",
+      "precision": 0.7838983050847458,
+      "recall": 0.8258928571428571,
+      "f1": 0.8043478260869565,
+      "support": 224
+    },
+    {
+      "class": "guacamole",
+      "precision": 0.9174311926605505,
+      "recall": 0.8771929824561403,
+      "f1": 0.8968609865470852,
+      "support": 228
+    },
+    {
+      "class": "gyoza",
+      "precision": 0.7981651376146789,
+      "recall": 0.7532467532467533,
+      "f1": 0.7750556792873051,
+      "support": 231
+    },
+    {
+      "class": "hamburger",
+      "precision": 0.7142857142857143,
+      "recall": 0.7575757575757576,
+      "f1": 0.7352941176470589,
+      "support": 231
+    },
+    {
+      "class": "hot_and_sour_soup",
+      "precision": 0.6602870813397129,
+      "recall": 0.6798029556650246,
+      "f1": 0.6699029126213593,
+      "support": 203
+    },
+    {
+      "class": "hot_dog",
+      "precision": 0.9147982062780269,
+      "recall": 0.8908296943231441,
+      "f1": 0.9026548672566371,
+      "support": 229
+    },
+    {
+      "class": "huevos_rancheros",
+      "precision": 0.7748917748917749,
+      "recall": 0.8099547511312217,
+      "f1": 0.7920353982300885,
+      "support": 221
+    },
+    {
+      "class": "hummus",
+      "precision": 0.7736625514403292,
+      "recall": 0.8034188034188035,
+      "f1": 0.7882599580712788,
+      "support": 234
+    },
+    {
+      "class": "ice_cream",
+      "precision": 0.755868544600939,
+      "recall": 0.7,
+      "f1": 0.7268623024830699,
+      "support": 230
+    },
+    {
+      "class": "lasagna",
+      "precision": 0.8354430379746836,
+      "recall": 0.853448275862069,
+      "f1": 0.8443496801705757,
+      "support": 232
+    },
+    {
+      "class": "lobster_bisque",
+      "precision": 0.7783505154639175,
+      "recall": 0.7743589743589744,
+      "f1": 0.7763496143958869,
+      "support": 195
+    },
+    {
+      "class": "lobster_roll_sandwich",
+      "precision": 0.8036529680365296,
+      "recall": 0.8186046511627907,
+      "f1": 0.8110599078341014,
+      "support": 215
+    },
+    {
+      "class": "macaroni_and_cheese",
+      "precision": 0.7773109243697479,
+      "recall": 0.7773109243697479,
+      "f1": 0.7773109243697479,
+      "support": 238
+    },
+    {
+      "class": "macarons",
+      "precision": 0.9348837209302325,
+      "recall": 0.8739130434782608,
+      "f1": 0.903370786516854,
+      "support": 230
+    },
+    {
+      "class": "miso_soup",
+      "precision": 0.7629310344827587,
+      "recall": 0.7797356828193832,
+      "f1": 0.7712418300653595,
+      "support": 227
+    },
+    {
+      "class": "mussels",
+      "precision": 0.9137931034482759,
+      "recall": 0.9098712446351931,
+      "f1": 0.9118279569892473,
+      "support": 233
+    },
+    {
+      "class": "nachos",
+      "precision": 0.8407960199004975,
+      "recall": 0.7612612612612613,
+      "f1": 0.7990543735224587,
+      "support": 222
+    },
+    {
+      "class": "omelette",
+      "precision": 0.7782426778242678,
+      "recall": 0.808695652173913,
+      "f1": 0.7931769722814499,
+      "support": 230
+    },
+    {
+      "class": "onion_rings",
+      "precision": 0.8604651162790697,
+      "recall": 0.8604651162790697,
+      "f1": 0.8604651162790697,
+      "support": 215
+    },
+    {
+      "class": "oysters",
+      "precision": 0.805,
+      "recall": 0.7318181818181818,
+      "f1": 0.7666666666666667,
+      "support": 220
+    },
+    {
+      "class": "pad_thai",
+      "precision": 0.817351598173516,
+      "recall": 0.7920353982300885,
+      "f1": 0.8044943820224719,
+      "support": 226
+    },
+    {
+      "class": "paella",
+      "precision": 0.908675799086758,
+      "recall": 0.8805309734513275,
+      "f1": 0.8943820224719101,
+      "support": 226
+    },
+    {
+      "class": "pancakes",
+      "precision": 0.752895752895753,
+      "recall": 0.8369098712446352,
+      "f1": 0.7926829268292683,
+      "support": 233
+    },
+    {
+      "class": "panna_cotta",
+      "precision": 0.811965811965812,
+      "recall": 0.8482142857142857,
+      "f1": 0.8296943231441049,
+      "support": 224
+    },
+    {
+      "class": "peking_duck",
+      "precision": 0.7989690721649485,
+      "recall": 0.7451923076923077,
+      "f1": 0.7711442786069652,
+      "support": 208
+    },
+    {
+      "class": "pho",
+      "precision": 0.8287037037037037,
+      "recall": 0.8287037037037037,
+      "f1": 0.8287037037037037,
+      "support": 216
+    },
+    {
+      "class": "pizza",
+      "precision": 0.7666666666666667,
+      "recall": 0.7863247863247863,
+      "f1": 0.7763713080168776,
+      "support": 234
+    },
+    {
+      "class": "pork_chop",
+      "precision": 0.6523605150214592,
+      "recall": 0.6755555555555556,
+      "f1": 0.6637554585152838,
+      "support": 225
+    },
+    {
+      "class": "poutine",
+      "precision": 0.8282828282828283,
+      "recall": 0.780952380952381,
+      "f1": 0.803921568627451,
+      "support": 210
+    },
+    {
+      "class": "prime_rib",
+      "precision": 0.8755760368663594,
+      "recall": 0.8715596330275229,
+      "f1": 0.8735632183908046,
+      "support": 218
+    },
+    {
+      "class": "pulled_pork_sandwich",
+      "precision": 0.8722466960352423,
+      "recall": 0.8839285714285714,
+      "f1": 0.8780487804878049,
+      "support": 224
+    },
+    {
+      "class": "ramen",
+      "precision": 0.8341013824884793,
+      "recall": 0.7835497835497836,
+      "f1": 0.8080357142857143,
+      "support": 231
+    },
+    {
+      "class": "ravioli",
+      "precision": 0.7180616740088106,
+      "recall": 0.690677966101695,
+      "f1": 0.7041036717062635,
+      "support": 236
+    },
+    {
+      "class": "red_velvet_cake",
+      "precision": 0.8815165876777251,
+      "recall": 0.8193832599118943,
+      "f1": 0.8493150684931506,
+      "support": 227
+    },
+    {
+      "class": "risotto",
+      "precision": 0.7732793522267206,
+      "recall": 0.8197424892703863,
+      "f1": 0.7958333333333333,
+      "support": 233
+    },
+    {
+      "class": "samosa",
+      "precision": 0.8047619047619048,
+      "recall": 0.7934272300469484,
+      "f1": 0.7990543735224587,
+      "support": 213
+    },
+    {
+      "class": "sashimi",
+      "precision": 0.6293103448275862,
+      "recall": 0.6460176991150443,
+      "f1": 0.6375545851528385,
+      "support": 226
+    },
+    {
+      "class": "scallops",
+      "precision": 0.7614678899082569,
+      "recall": 0.7345132743362832,
+      "f1": 0.7477477477477478,
+      "support": 226
+    },
+    {
+      "class": "seaweed_salad",
+      "precision": 0.8293838862559242,
+      "recall": 0.7990867579908676,
+      "f1": 0.813953488372093,
+      "support": 219
+    },
+    {
+      "class": "shrimp_and_grits",
+      "precision": 0.8193832599118943,
+      "recall": 0.8157894736842105,
+      "f1": 0.8175824175824176,
+      "support": 228
+    },
+    {
+      "class": "spaghetti_bolognese",
+      "precision": 0.8423423423423423,
+      "recall": 0.8904761904761904,
+      "f1": 0.8657407407407407,
+      "support": 210
+    },
+    {
+      "class": "spaghetti_carbonara",
+      "precision": 0.8940092165898618,
+      "recall": 0.8899082568807339,
+      "f1": 0.8919540229885058,
+      "support": 218
+    },
+    {
+      "class": "spring_rolls",
+      "precision": 0.7817460317460317,
+      "recall": 0.8640350877192983,
+      "f1": 0.8208333333333333,
+      "support": 228
+    },
+    {
+      "class": "steak",
+      "precision": 0.7649769585253456,
+      "recall": 0.7248908296943232,
+      "f1": 0.7443946188340808,
+      "support": 229
+    },
+    {
+      "class": "strawberry_shortcake",
+      "precision": 0.8362068965517241,
+      "recall": 0.8738738738738738,
+      "f1": 0.8546255506607929,
+      "support": 222
+    },
+    {
+      "class": "sushi",
+      "precision": 0.8538812785388128,
+      "recall": 0.7923728813559322,
+      "f1": 0.8219780219780219,
+      "support": 236
+    },
+    {
+      "class": "tacos",
+      "precision": 0.8632075471698113,
+      "recall": 0.7854077253218884,
+      "f1": 0.8224719101123595,
+      "support": 233
+    },
+    {
+      "class": "takoyaki",
+      "precision": 0.8414096916299559,
+      "recall": 0.8642533936651584,
+      "f1": 0.8526785714285714,
+      "support": 221
+    },
+    {
+      "class": "tiramisu",
+      "precision": 0.8405172413793104,
+      "recall": 0.8441558441558441,
+      "f1": 0.8423326133909287,
+      "support": 231
+    },
+    {
+      "class": "tuna_tartare",
+      "precision": 0.7277227722772277,
+      "recall": 0.7033492822966507,
+      "f1": 0.7153284671532847,
+      "support": 209
+    },
+    {
+      "class": "waffles",
+      "precision": 0.9216589861751152,
+      "recall": 0.8547008547008547,
+      "f1": 0.8869179600886918,
+      "support": 234
+    }
+  ],
+  "error_summary": {
+    "n_errors": 4398,
+    "error_rate": 0.19465344781800478,
+    "mean_confidence_correct": 0.9618824124336243,
+    "mean_confidence_errors": 0.723421573638916,
+    "high_confidence_errors_conf_gt_0.9": 1405,
+    "top_confusions": [
+      {
+        "true": "ice_cream",
+        "predicted": "frozen_yogurt",
+        "count": 32,
+        "rate_within_true_class": 0.1391304347826087,
+        "share_of_all_errors": 0.007276034561164165
+      },
+      {
+        "true": "sushi",
+        "predicted": "sashimi",
+        "count": 20,
+        "rate_within_true_class": 0.0847457627118644,
+        "share_of_all_errors": 0.004547521600727604
+      },
+      {
+        "true": "miso_soup",
+        "predicted": "hot_and_sour_soup",
+        "count": 18,
+        "rate_within_true_class": 0.07929515418502203,
+        "share_of_all_errors": 0.004092769440654843
+      },
+      {
+        "true": "beef_tartare",
+        "predicted": "beef_carpaccio",
+        "count": 16,
+        "rate_within_true_class": 0.07239819004524888,
+        "share_of_all_errors": 0.0036380172805820826
+      },
+      {
+        "true": "hot_and_sour_soup",
+        "predicted": "miso_soup",
+        "count": 14,
+        "rate_within_true_class": 0.06896551724137931,
+        "share_of_all_errors": 0.0031832651205093224
+      },
+      {
+        "true": "tuna_tartare",
+        "predicted": "beef_tartare",
+        "count": 14,
+        "rate_within_true_class": 0.06698564593301436,
+        "share_of_all_errors": 0.0031832651205093224
+      },
+      {
+        "true": "beef_tartare",
+        "predicted": "tuna_tartare",
+        "count": 13,
+        "rate_within_true_class": 0.058823529411764705,
+        "share_of_all_errors": 0.0029558890404729424
+      },
+      {
+        "true": "frozen_yogurt",
+        "predicted": "ice_cream",
+        "count": 12,
+        "rate_within_true_class": 0.05150214592274678,
+        "share_of_all_errors": 0.002728512960436562
+      },
+      {
+        "true": "steak",
+        "predicted": "filet_mignon",
+        "count": 12,
+        "rate_within_true_class": 0.05240174672489083,
+        "share_of_all_errors": 0.002728512960436562
+      },
+      {
+        "true": "gyoza",
+        "predicted": "dumplings",
+        "count": 11,
+        "rate_within_true_class": 0.047619047619047616,
+        "share_of_all_errors": 0.0025011368804001817
+      }
+    ]
+  },
+  "val": {
+    "n_samples": 4824,
+    "accuracy": 0.8038971807628524,
+    "macro_f1": 0.8027795618361987,
+    "top5_accuracy": 0.9340796019900498
+  },
+  "missing_text": {
+    "as_is": {
+      "n_samples": 121,
+      "accuracy": 0.6198347107438017,
+      "macro_f1": 0.38326261197548317,
+      "top5_accuracy": 0.8181818181818182
+    },
+    "text_zero_filled": {
+      "n_samples": 121,
+      "accuracy": 0.6198347107438017,
+      "macro_f1": 0.3993635077793493,
+      "top5_accuracy": 0.768595041322314
+    }
+  },
+  "modality_removal": {
+    "image_removed": {
+      "n_samples": 22594,
+      "accuracy": 0.363149508719129,
+      "macro_f1": 0.3570590672481786,
+      "top5_accuracy": 0.5590864831371161
+    },
+    "text_removed": {
+      "n_samples": 22594,
+      "accuracy": 0.6653093741701337,
+      "macro_f1": 0.656762194961072,
+      "top5_accuracy": 0.8381871293263699
+    }
+  },
+  "aux_heads": {},
+  "parameters": {
+    "total": 91892389,
+    "trainable": 91892389,
+    "image_encoder": 23508032,
+    "text_encoder": 66362880,
+    "head": 2021477
+  },
+  "inference": {
+    "device": "cuda",
+    "amp_dtype": "torch.bfloat16",
+    "batch_size": 128,
+    "timed_iters": 30,
+    "throughput_items_per_s": 2408.214035774517,
+    "ms_per_item_batched": 0.4152454828120729,
+    "latency_samples": 200,
+    "latency_ms_bs1_mean": 7.568811748642474,
+    "latency_ms_bs1_median": 7.528981659561396,
+    "latency_ms_bs1_p95": 7.874414650723338,
+    "note": "titles are trimmed to the longest title of the batch; images are 224 x 224"
+  },
+  "eval_amp_dtype": "torch.bfloat16",
+  "eval_pass_time_s": 16.767649055924267,
+  "checkpoint": {
+    "file": "checkpoints/best.pt",
+    "epoch": 10,
+    "selection_metric": "val_macro_f1",
+    "val_metrics": {
+      "val_loss": 1.0707312466493293,
+      "val_acc": 0.8038971807628524,
+      "val_macro_f1": 0.8027795618361987,
+      "val_top5": 0.9340796019900498
+    },
+    "sha256": "64de009894f7c7a002768ab93d2e7fc13207a6921405a1103a6c96b48c8d6cbe"
+  },
+  "split_file": "/home/calypso/co3133_t/co3133-a3/data/splits/split.json",
+  "split_fingerprints": {
+    "train": "32547835c88028e6",
+    "val": "5028de5edbd16bda",
+    "test": "1f8fa282b49dc603"
+  },
+  "set_fingerprints": {
+    "val": "b6890e6c2b8c3019",
+    "test": "4ab712213b88cea7",
+    "test_missing_text": "a410e59595ff6d71"
+  },
+  "git_at_eval": {
+    "commit": "b51d3fb94f85a1cbed7cbbd232588773bd6eb734",
+    "dirty": false,
+    "tag": null,
+    "source": "git"
+  }
+}

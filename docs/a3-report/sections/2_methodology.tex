@@ -14,14 +14,15 @@
     \node[box] (raw) {Kaggle mirror\\images + titles};
     \node[box, right=of raw] (prep) {\texttt{prepare\_data}\\validity, clusters,\\split, resize};
     \node[box, right=of prep] (split) {committed\\\texttt{data/splits}};
-    \node[box, right=of split] (train) {\texttt{train}\\UA, UB, F1\\$\times$ 3 seeds};
+    \node[box, right=of split] (train) {\texttt{train}\\UA, UB, F1, F2,\\ablations $\times$ 3 seeds};
     \node[box, right=of train] (eval) {\texttt{evaluate}\\test, subsets,\\cost};
     \node[box, below=of eval] (cmp) {\texttt{compare}\\decision rule,\\support/conflict};
-    \node[box, left=of cmp] (ref) {K0 rule,\\F0 late fusion};
+    \node[box, left=of cmp] (ref) {K0 rule, T0,\\F0 late fusion};
+    \node[box, left=of ref] (ana) {\texttt{analysis\_m3}, review:\\removal curves,\\Grad-CAM, taxonomy};
     \draw[->] (raw) -- (prep); \draw[->] (prep) -- (split); \draw[->] (split) -- (train);
-    \draw[->] (train) -- (eval); \draw[->] (eval) -- (cmp); \draw[->] (eval) -- (ref); \draw[->] (ref) -- (cmp);
+    \draw[->] (train) -- (eval); \draw[->] (eval) -- (cmp); \draw[->] (eval) -- (ref); \draw[->] (ref) -- (cmp); \draw[->] (cmp) -- (ana);
   \end{tikzpicture}
-  \caption{M2 pipeline. Every step is a script in the repository; every run stores its configuration, environment,
+  \caption{Pipeline. Every step is a script in the repository; every run stores its configuration, environment,
   log, history, selected checkpoint and test outputs.}
   \label{fig:pipeline}
 \end{figure}
@@ -42,24 +43,27 @@ tokens). Each batch is trimmed to the length of its longest title. The final hid
 
 \paragraph{Alignment.}
 The two modalities are aligned at the item level through the shared page id. There is no word-to-region
-annotation; token-level alignment is left to the cross-modal attention of F2 in M3.
+annotation. F2 learns a soft token-level alignment with cross-modal attention between image regions and title
+tokens (\cref{sec:f2}); the other models only align the two modalities at the item level.
 
 \subsection{Models}
 \label{sec:models}
 
 \begin{table}[H]
   \centering\small
-  \caption{Models of M2. The parameter counts are printed by the code.}
+  \caption{Models. The parameter counts are printed by the code.}
   \label{tab:models}
   \begin{tabularx}{\linewidth}{@{}llYr@{}}
     \toprule
     ID & Modalities & Definition & Parameters \\
     \midrule
     K0 & text  & most-mentioned class in the title (lexicon, ties broken by the first mention); otherwise the most frequent train class & 0 \\
+    T0 & text  & TF-IDF of word 1--2-grams and character 3--5-grams, multinomial logistic regression~\cite{pedregosa2011sklearn} & $13.6$\,M \\
     UA & image & $\operatorname{Linear}_{2048\to101}(\mathbf{u})$ & $23.71$\,M \\
     UB & text  & $\operatorname{Linear}_{768\to101}(\operatorname{Dropout}_{0.1}(\mathbf{v}))$ & $66.44$\,M \\
     F0 & both  & $\mathbf{p} = w\,\mathbf{p}_{\mathrm{UA}} + (1-w)\,\mathbf{p}_{\mathrm{UB}}$, with $w$ chosen on validation & $0$ extra \\
     F1 & both  & concat fusion, \cref{eq:f1} & $91.89$\,M \\
+    F2 & both  & cross-modal transformer fusion with auxiliary losses and modality dropout, \cref{sec:f2} & $97.98$\,M \\
     \bottomrule
   \end{tabularx}
 \end{table}
@@ -85,13 +89,142 @@ cross-entropy loss on the fused logits.
 
 \paragraph{Missing-modality handling.}
 F1 zero-fills the projected vector of a missing modality ($m=0$). F0 falls back to the available unimodal model.
-F1 is trained on complete pairs only, so zero-filling is outside its training distribution. This is
-deliberate in M2: modality dropout is part of F2.
+F1 is trained on complete pairs only, so zero-filling is outside its training distribution. F2 is trained
+with missing modalities (modality dropout) and uses learned \texttt{[MISSING]} tokens instead.
 
 \paragraph{Losses.}
-UA, UB and F1 each use a single cross-entropy loss. Per-modality auxiliary losses,
-$\mathcal{L} = \CE(\text{fused}) + \lambda\,[\CE(\text{image head}) + \CE(\text{text head})]$, belong to F2 and are
-tested in ablation E1 (M3).
+UA, UB and F1 each use a single cross-entropy loss. F2 adds per-modality auxiliary losses (\cref{eq:f2loss}),
+which are tested in ablation E1.
+
+\subsection{Improved Fusion (F2)}
+\label{sec:f2}
+
+The M2 analysis showed that F1 under-uses the image. The title alone fits the training set, so the image branch
+inside F1 ends up weaker than the standalone image model. F2 targets this failure with three changes, all fixed in
+the proposal before any F2 run: token-level cross-modal attention, auxiliary unimodal losses, and modality dropout.
+
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[every node/.style={font=\small},
+      box/.style={draw, rounded corners, align=center, minimum height=8mm, inner sep=3pt},
+      aux/.style={draw, rounded corners, align=center, inner sep=2pt, font=\scriptsize, dashed},
+      >={Stealth}]
+    \node[box] (img) at (0,0) {image\\$224\times224$};
+    \node[box] (rn)  at (3.0,0) {ResNet-50 layer4\\$7\times7\times2048$};
+    \node[box] (pi)  at (6.4,0) {$W_I\,\cdot + \mathbf{p}_i + \mathbf{t}_I$\\49 tokens $\times 512$};
+    \node[box] (txt) at (0,-2.2) {title\\$\le 64$ tokens};
+    \node[box] (db)  at (3.0,-2.2) {DistilBERT\\$T\times768$};
+    \node[box] (pt)  at (6.4,-2.2) {$W_T\,\cdot + \mathbf{t}_T$\\$T$ tokens $\times 512$};
+    \node[box, fill=gray!8, minimum height=20mm] (tf) at (9.6,-1.1) {2 pre-LN\\transformer\\layers, 8 heads};
+    \node[box] (fus) at (9.6,0.65) {\texttt{[FUS]}};
+    \node[box] (head) at (12.3,-1.1) {LN $\to$ 101\\$\mathcal{L}_{\mathrm{fused}}$};
+    \node[aux] (ai) at (3.0,1.25) {aux head on pooled $\mathbf{u}$: $\lambda\,\mathcal{L}_I$};
+    \node[aux] (at) at (3.0,-3.45) {aux head on \texttt{[CLS]} $\mathbf{v}$: $\lambda\,\mathcal{L}_T$};
+    \draw[->] (img) -- (rn); \draw[->] (txt) -- (db);
+    \draw[->] (rn) -- (pi); \draw[->] (db) -- (pt);
+    \draw[->] (pi.east) -- (tf.west |- pi.east); \draw[->] (pt.east) -- (tf.west |- pt.east);
+    \draw[->] (fus) -- (tf); \draw[->] (tf) -- (head);
+    \draw[->, dashed] (rn) -- (ai); \draw[->, dashed] (db) -- (at);
+  \end{tikzpicture}
+  \caption{F2. Image regions and title tokens attend to each other and to a learned \texttt{[FUS]} token, whose final
+  state is classified. Dashed: auxiliary unimodal heads. During training, one modality of $15\%$ of the items is
+  replaced by a learned \texttt{[MISSING]} token.}
+  \label{fig:f2}
+\end{figure}
+
+\paragraph{Tokens.}
+The image gives the ResNet-50 \texttt{layer4} map, i.e.\ $49$ region features $\mathbf{f}_i\in\R^{2048}$. The title
+gives the DistilBERT hidden states $\mathbf{h}_j\in\R^{768}$, which already contain word positions. Both are projected
+to $d=512$:
+\begin{equation}
+  \mathbf{z}^I_i = W_I\mathbf{f}_i + \mathbf{p}_i + \mathbf{t}_I, \qquad
+  \mathbf{z}^T_j = W_T\mathbf{h}_j + \mathbf{t}_T, \qquad
+  Z^{(0)} = [\,\mathbf{z}_{\mathrm{FUS}};\ \mathbf{z}^I_1,\dots,\mathbf{z}^I_{49};\ \mathbf{z}^T_1,\dots,\mathbf{z}^T_{T}\,],
+\end{equation}
+where $\mathbf{p}_i$ is a learned position embedding of the $7\times7$ grid, $\mathbf{t}_I,\mathbf{t}_T$ are learned
+type embeddings and $\mathbf{z}_{\mathrm{FUS}}$ is a learned fusion token.
+
+\paragraph{Fusion.}
+Two pre-LN transformer layers~\cite{vaswani2017attention} ($8$ heads, FFN $2048$, dropout $0.1$) run self-attention
+over the whole sequence. Padding tokens are masked. Every image region can therefore attend to every title word
+and vice versa. The prediction is $f_{\mathrm{F2}} = W_o\LN(\mathbf{z}^{(2)}_{\mathrm{FUS}})$. A single fusion token
+that gathers both modalities is close to the bottleneck tokens of Nagrani et al.~\cite{nagrani2021bottlenecks}.
+Unlike F1, this design can weigh individual regions and words differently for every item. The \texttt{[FUS]}
+attention also shows how much the model relies on each modality (\cref{sec:qualitative}).
+
+\paragraph{Auxiliary unimodal losses.}
+Two linear heads classify the pooled image feature $\mathbf{u}\in\R^{2048}$ and the text \texttt{[CLS]} state
+$\mathbf{v}\in\R^{768}$:
+\begin{equation}
+  \label{eq:f2loss}
+  \mathcal{L} = \CE\big(f_{\mathrm{F2}}, y\big) + \lambda\,\big[\CE(a_I(\mathbf{u}), y) + \CE(a_T(\mathbf{v}), y)\big],
+  \qquad \lambda = 0.5 .
+\end{equation}
+Each encoder therefore has to stay discriminative on its own, so the image encoder keeps learning even when the
+title already fits the training labels~\cite{wang2020makes}. The auxiliary heads are not used for the prediction.
+
+\paragraph{Modality dropout and missing modalities.}
+During training, each complete pair loses one modality with probability $p=0.15$ (image or title, $50/50$, never
+both), in the spirit of ModDrop~\cite{neverova2016moddrop}. All tokens of the dropped modality are replaced by one
+learned \texttt{[MISSING\_IMG]} or \texttt{[MISSING\_TXT]} token; the other positions of that modality are masked.
+The fusion therefore learns to classify from one modality alone. At test time, a missing modality is handled in the
+same way, with no special case. The auxiliary losses always see both encoders.
+
+\paragraph{Training schedule.}
+In epoch~1 both encoders are frozen and only the new layers learn ($5\cdot10^{-4}$). The randomly initialised fusion
+layers then do not send noisy gradients into the pretrained encoders. From epoch~2, the whole model is fine-tuned
+with the same learning rates as F1. The warm-up covers $15\%$ of the steps, so the encoders also start with a
+warm-up after they are unfrozen. The model has $97.98$\,M parameters: $8.11$\,M new layers on top of the two
+encoders. It needs $5.06$\,GMACs per item, against $4.73$ for F1.
+
+\subsection{Ablations and Analyses}
+\label{sec:ablations}
+
+\begin{table}[H]
+  \centering\small
+  \caption{Controlled experiments. Each changes one factor of F2, or of the input, and keeps everything else, including
+  the seeds and the split.}
+  \label{tab:ablations}
+  \begin{tabularx}{\linewidth}{@{}lYY@{}}
+    \toprule
+    ID & Change & Question \\
+    \midrule
+    E1 & $\lambda = 0$. The auxiliary heads are trained on detached features, so they still measure each encoder without changing it & Do the auxiliary losses keep the image branch alive? \\
+    E2 & every class-name mention (the lexicon of Part~1) is replaced by \texttt{[MASK]} in the train, validation and test titles; UB, T0, F0, F1 and F2 are retrained & How much of the result depends on the label leaking into the title, and which fusion uses the image best when it does not? \\
+    E4 & $p = 0$ (no modality dropout) & Does the modality dropout help with missing modalities, and does it cost anything on complete pairs? \\
+    E-mod & at test time, the title (or the image) is removed from a random $0$, $25$, $50$, $75$ or $100\%$ of the complete pairs, without retraining & How fast does each model degrade when a modality goes missing? \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\paragraph{Notes on the ablations.}
+\begin{itemize}
+  \item \textbf{E2 masking.} It changes $79.8\%$ of the training titles ($50{,}092$ of $62{,}771$). After masking, the
+        lexicon finds no class name in any title. The mention subsets of \cref{sec:main} still use the original
+        titles.
+  \item \textbf{E-mod fallbacks.} For a removed modality, F1 zero-fills it and F2 uses its \texttt{[MISSING]} token.
+        F0 falls back to the other unimodal model. UA and UB predict the most frequent training class.
+\end{itemize}
+
+\paragraph{Analyses.}
+\begin{itemize}
+  \item \textbf{Support/conflict groups} over three seeds. The groups come from the UA and UB runs of the same seed.
+  \item \textbf{Temperature scaling}~\cite{guo2017calibration}: one temperature per run, fitted on validation.
+  \item \textbf{Qualitative examples} for each group:
+        \begin{itemize}
+          \item a Grad-CAM map~\cite{selvaraju2017gradcam} of F2's image encoder for the predicted class;
+          \item the \texttt{[FUS]} attention of the last fusion layer, averaged over heads.
+        \end{itemize}
+  \item \textbf{Error taxonomy} from a manual review of $100$ conflict items, 50 Conflict-I and 50 Conflict-T,
+        drawn at random from seed 42. Each reviewer chose the main reason why the failing unimodal model is wrong:
+        \begin{itemize}
+          \item image unrelated or visually similar (for the image model);
+          \item title generic or title naming another dish (for the text model);
+          \item wrong label or other (for both).
+        \end{itemize}
+        Phan Bá Thanh reviewed items 1--50 and Trần Công Hoàng Phước items 51--100. Hard cases were discussed
+        together.
+\end{itemize}
 
 \subsection{Pretraining and Fine-Tuning}
 \label{sec:training}
@@ -106,9 +239,10 @@ Both encoders start from public pretrained weights and are fully fine-tuned with
   \begin{tabularx}{\linewidth}{@{}lY@{}}
     \toprule
     Image transforms & train: \texttt{RandomResizedCrop(224, scale 0.35--1)}, horizontal flip, colour jitter $0.1$; evaluation: \texttt{Resize(256)} + \texttt{CenterCrop(224)} \\
-    Optimiser & AdamW~\cite{loshchilov2019adamw}. Learning rates: image encoder $10^{-4}$, text encoder $3\cdot10^{-5}$, new layers $10^{-3}$ (UA, UB) or $5\cdot10^{-4}$ (F1). Weight decay $0.05$ (image encoder and heads), $0.01$ (text encoder); none on biases and normalisation parameters \\
+    Optimiser & AdamW~\cite{loshchilov2019adamw}. Learning rates: image encoder $10^{-4}$, text encoder $3\cdot10^{-5}$, new layers $10^{-3}$ (UA, UB) or $5\cdot10^{-4}$ (F1, F2). Weight decay $0.05$ (image encoder and heads), $0.01$ (text encoder); none on biases and normalisation parameters \\
     Schedule & linear warm-up over $5\%$ of the steps, then cosine decay to $1\%$ \\
     Epochs, batch & UA and F1: 10 epochs; UB: 5 epochs; batch size 64; bf16 autocast; gradient clipping at $1.0$ \\
+    F2 and its ablations & as F1, plus: epoch 1 with frozen encoders, warm-up over $15\%$ of the steps, head learning rate $5\cdot10^{-4}$ \\
     Checkpoint & the epoch with the best validation macro-F1 on complete pairs; early stopping after 3 epochs without improvement \\
     Seeds & split seed $42$ (fixed); training seeds $42$, $123$, $2026$ \\
     \bottomrule
@@ -149,7 +283,7 @@ The fusion models are also tested with each modality removed.
 \subsection{Hardware and Software}
 \label{sec:hardware}
 
-The Kaggle GPU quota ran out during M2, so the training runs used a lab workstation:
+The Kaggle GPU quota ran out during M2, so all training runs (M2 and M3) used a lab workstation:
 \begin{itemize}
   \item \textbf{GPU:} NVIDIA RTX A6000 (48\,GB), shared with other users' inference servers.
   \item \textbf{Machine:} 64 CPU cores, Ubuntu 24.04.
@@ -157,4 +291,6 @@ The Kaggle GPU quota ran out during M2, so the training runs used a lab workstat
 \end{itemize}
 The runner (\texttt{scripts/remote/}) runs inside \texttt{tmux}. It picks the GPU with the most free memory
 (32\,GB free at the start), logs the GPU usage every five minutes, and resumes from the last checkpoint after a
-crash; no crash occurred. Data preparation ran on a Kaggle CPU notebook with 4 vCPU (26 minutes).
+crash; no crash occurred in either milestone. Data preparation ran on a Kaggle CPU notebook with 4 vCPU
+(26 minutes). The M3 runs used the same machine, software and $16$ data-loading workers. T0 and the analyses ran
+on the CPU of the same machine.

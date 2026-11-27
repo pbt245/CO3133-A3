@@ -1,0 +1,13 @@
+2026-11-26 09:49:31 | INFO | Run upmc-ub_distilbert_mask-s42-20261126-094930 | device cuda | torch 2.9.1+cu128 | git {'commit': 'b51d3fb94f85a1cbed7cbbd232588773bd6eb734', 'dirty': False, 'tag': None, 'source': 'git'}
+2026-11-26 09:49:36 | INFO | Data: images None | sizes {'train': 62771, 'val': 4824} | class names masked: {'titles_changed': 50092, 'titles': 62771, 'residual_mentions': 0, 'set': 'train'}
+2026-11-26 09:49:36 | INFO | Dataset upmc | split /home/calypso/co3133_t/co3133-a3/data/splits/split.json | train/val = 62771/4824 complete pairs | modalities image=False text=True
+2026-11-26 09:49:37 | INFO | Model text_only | parameters {'total': '66,440,549', 'trainable': '66,440,549', 'image_encoder': '0', 'text_encoder': '66,362,880', 'head': '77,669'} | 0.60 GMACs/item
+2026-11-26 09:49:37 | INFO | AMP dtype torch.bfloat16 | optimizer groups [('head_no_decay', 4.081632653061225e-06, 0.0, 101), ('head', 4.081632653061225e-06, 0.01, 77568), ('text_encoder_no_decay', 1.2244897959183676e-07, 0.0, 61440), ('text_encoder', 1.2244897959183676e-07, 0.01, 66301440)]
+2026-11-26 09:50:06 | INFO | epoch  1 | train loss 3.4933 acc 0.2259 | val loss 2.8301 acc 0.3516 macroF1 0.3571 top5 0.5560 | 27s (2314 items/s)  *best*
+2026-11-26 09:50:34 | INFO | epoch  2 | train loss 2.5795 acc 0.3955 | val loss 2.5892 acc 0.4090 macroF1 0.4121 top5 0.6107 | 26s (2386 items/s)  *best*
+2026-11-26 09:51:03 | INFO | epoch  3 | train loss 2.1216 acc 0.4847 | val loss 2.5212 acc 0.4351 macroF1 0.4361 top5 0.6227 | 27s (2364 items/s)  *best*
+2026-11-26 09:51:31 | INFO | epoch  4 | train loss 1.8081 acc 0.5557 | val loss 2.5154 acc 0.4413 macroF1 0.4410 top5 0.6358 | 26s (2386 items/s)  *best*
+2026-11-26 09:51:59 | INFO | epoch  5 | train loss 1.6521 acc 0.5910 | val loss 2.5238 acc 0.4459 macroF1 0.4462 top5 0.6383 | 26s (2393 items/s)  *best*
+2026-11-26 09:51:59 | INFO | Best epoch 5 | val macroF1 0.4462 | val acc 0.4459 | train time 2.2 min
+2026-11-26 09:52:12 | INFO | [test] acc 0.4372 (95% CI 0.4308-0.4431) | macroF1 0.4376 (95% CI 0.4309-0.4432) | top5 0.6360 | ECE 0.0696 | dedup macroF1 0.4239 | 17375 items/s | bs1 2.59 ms
+2026-11-26 09:52:12 | INFO | Done: /home/calypso/co3133_t/co3133-a3/outputs/runs/upmc/ub_distilbert_mask/seed42

@@ -137,7 +137,10 @@ def main():
     t["verdict"] = (["title_generic", "image_unrelated", "wrong_label", "other"] * len(t))[:len(t)]
     t.to_csv(w / "review/conflict_review.csv", index=False)
     run(["scripts/conflict_review.py", "score", "--csv", w / "review/conflict_review.csv", "--out",
-         w / "review/summary.json"], env)
+         w / "review/summary.json", "--split-dir", split_dir, "--text-meta", meta_dir / "text_meta.csv.gz",
+         "--image-run", runs / "ua_resnet50/seed42", "--text-run", runs / "ub_distilbert/seed42",
+         "--f0-run", runs / "f0_late_fusion/seed42", "--f1-run", runs / "f1_concat/seed42",
+         "--fusion-run", runs / "f2_crossmodal/seed42"], env)
     run(["scripts/compare.py", "--runs", runs, "--out", w / "comparison", "--meta-dir", meta_dir], env)
     run(["scripts/analysis_m3.py", "--runs", runs, "--out", w / "analysis", "--split-dir", split_dir,
          "--review", w / "review/summary.json"], env)

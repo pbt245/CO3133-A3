@@ -1,53 +1,64 @@
 % =====================================================================
-%  Part 4: Deviations from the proposal and plan for M3
+%  Part 4: Deviations from the proposal and conclusions
 % =====================================================================
-\section{Deviations from the Proposal and Plan for M3}
+\section{Deviations from the Proposal}
 \label{sec:deviations}
-
-\subsection{Deviations}
 
 \begin{table}[H]
   \centering\small
-  \caption{Differences between the approved proposal and the M2 implementation.}
+  \caption{Differences between the approved proposal and the implementation.}
   \begin{tabularx}{\linewidth}{@{}YYY@{}}
     \toprule
-    Proposal & M2 & Reason \\
+    Proposal & Implementation & Reason \\
     \midrule
     Kaggle RTX PRO 6000 for all runs & lab RTX A6000 (shared) for training; Kaggle CPU notebook for data preparation & the Kaggle GPU quota ran out \\
     validation $\approx 5{,}000$ items & $4{,}860$ items ($14$ folds, as the formula in the proposal gives) & formula of proposal section 3.1 \\
     at least $1{,}253$ test duplicates (md5 only) & $3{,}290$ with pHash near-duplicates & near-duplicate search, as planned \\
     K0 on exact class names ($71.2\%$) & K0 with the lexicon ($76.8\%$) & plurals and synonyms, as announced in the proposal \\
-    titles pre-tokenised into a cache & tokenised when the dataset is built (seconds) & a cache was not needed \\
     one-epoch timing runs & 200-step timing runs before the main runs & enough to measure throughput and catch errors \\
     four audit verdicts & five (adds ``both unrelated'') & the image and the title can both be off \\
-    -- & new title-unseen test view & title leakage found in M2 (\cref{sec:leakage}) \\
+    -- & title-unseen test view & title leakage found in M2 (\cref{sec:leakage}) \\
+    E-mod with retraining at several drop rates & test-time removal curves for every model; the effect of training with missing modalities is measured by E4 & one controlled factor per experiment; E4 answers the training question \\
+    optional E3 (frozen encoders) & not run & time; E4 and T0 were chosen instead \\
     \bottomrule
   \end{tabularx}
 \end{table}
 
-\subsection{Plan for M3}
+\section{Conclusions}
+\label{sec:conclusions}
 
-\begin{itemize}
-  \item \textbf{F2, the improved fusion.} The design follows the proposal:
+\begin{enumerate}
+  \item \textbf{Multimodality is worth it on recipe pages.} Every fusion is $6$--$7$\,pp of macro-F1 above the best
+        single modality. The gain holds on the leakage-controlled subsets. It comes from the $34\%$ of items on which
+        exactly one modality is right.
+  \item \textbf{The page title is a strong but leaky signal.}
         \begin{itemize}
-          \item tokens: 49 image tokens from the ResNet-50 feature map and the title tokens, plus a learned
-                \texttt{[FUS]} token;
-          \item fusion: 2 transformer layers;
-          \item losses: auxiliary unimodal losses with $\lambda=0.5$;
-          \item missing modality: modality dropout with $p=0.15$ and learned \texttt{[MISSING]} tokens;
-          \item training: one epoch with frozen encoders, then full fine-tuning.
+          \item $79\%$ of the titles name the class, because they come from search queries.
+          \item Masking these names halves the text model.
+          \item $39\%$ of the test titles repeat a training title.
         \end{itemize}
-        The M2 results give F2 a concrete target: keep F1's ability to combine partial evidence, but stop the
-        title from starving the image branch (\cref{sec:support}).
-  \item \textbf{Ablations.}
+        Any claim about the text modality on this dataset must therefore be checked on masked and unseen titles.
+  \item \textbf{The improved fusion F2 does what it was designed to do.}
         \begin{itemize}
-          \item E1: auxiliary losses on/off.
-          \item E2: class names masked in the titles, for UB, F1 and F2.
-          \item E-mod: test-time modality removal for F1 and F2.
+          \item It beats the simple trained fusion F1 on every test view.
+          \item The auxiliary losses keep the image encoder as strong as a standalone image model (E1). This
+                removes most of the modality laziness found in M2.
+          \item The modality dropout makes it more robust to a missing title at no cost on complete pairs (E4).
+          \item Its attention moves to the image when the title is uninformative.
         \end{itemize}
-        The optional items E3, E4 and T0 follow if time allows.
-  \item \textbf{Analysis.} Support/conflict over three seeds, Grad-CAM and \texttt{[FUS]} attention examples, an
-        error taxonomy from a manual review of 100 conflict items, temperature scaling, and the title-unseen view
-        as a reported metric.
-  \item \textbf{Deliverables.} Final report, slides, video, Pages update and public checkpoints.
-\end{itemize}
+  \item \textbf{F2 matches but does not beat the late fusion F0 on complete pairs.} When both unimodal models are
+        strong, averaging their probabilities is a hard baseline. F2 becomes the best model when the title carries
+        less direct information (E2: $+2.5$\,pp over F0). It is also the best-calibrated model, while F0 is the worst.
+        For deployment we would choose:
+        \begin{itemize}
+          \item F0 when the titles are informative and missing titles are frequent;
+          \item F2 when calibrated confidence is needed or the text is weak.
+        \end{itemize}
+  \item \textbf{Remaining errors.}
+        \begin{itemize}
+          \item Titles that name another dish: no fusion resolves half of them.
+          \item Visually similar dishes, which the image model confuses.
+        \end{itemize}
+        Natural next steps are an image encoder pretrained on food (A2), contrastive image--text pretraining, and
+        training on a version of the dataset with titles deduplicated across splits.
+\end{enumerate}

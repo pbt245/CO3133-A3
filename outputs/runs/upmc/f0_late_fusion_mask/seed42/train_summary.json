@@ -1,0 +1,13 @@
+{
+  "experiment": "f0_late_fusion_mask",
+  "model": "late_fusion",
+  "seed": 42,
+  "finished": true,
+  "train_time_s": 997.2028621479403,
+  "parameters": {
+    "total": 90155530,
+    "trainable": 0
+  },
+  "best_val_macro_f1": 0.780574987346397,
+  "weight_image": 0.45
+}

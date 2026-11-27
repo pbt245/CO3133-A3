@@ -1,0 +1,61 @@
+% =====================================================================
+%  Summary of the final report
+% =====================================================================
+\section*{Summary}
+\addcontentsline{toc}{section}{Summary}
+
+This is the final report of Assignment~3 (milestone M3, specification section~6.13: \emph{improved fusion and
+ablations complete}). We classify recipe web pages of UPMC Food-101 into 101 dishes from one image and the page
+title. The dataset proposal (M1) and the M2 draft were approved by the instructor.
+
+\paragraph{What was built.}
+\begin{itemize}
+  \item \textbf{Two unimodal baselines:} UA, an image model on ResNet-50, and UB, a text model on DistilBERT.
+  \item \textbf{Three fusions:}
+        \begin{itemize}
+          \item F0, a late fusion of the two softmax outputs;
+          \item F1, a concat fusion trained end to end;
+          \item F2, the improved fusion. It is a cross-modal transformer over image-region and title tokens, with
+                auxiliary unimodal losses and modality dropout.
+        \end{itemize}
+  \item \textbf{Two text references:} a keyword rule (K0) and TF-IDF with logistic regression (T0).
+  \item \textbf{Three ablations of F2:} the auxiliary losses (E1), class names masked in every title (E2) and the
+        modality dropout (E4). F2 and its ablations are also tested with each modality removed from part of the
+        test set (E-mod).
+\end{itemize}
+All trained models were run with three seeds. Every decision uses the rule registered in the proposal.
+
+\paragraph{Main findings.}
+\begin{enumerate}
+  \item \textbf{Fusion helps a lot.} Every fusion is $6$--$7$\,pp of macro-F1 above the best unimodal model
+        (UB, $86.8\%$).
+  \item \textbf{F2 beats F1 but not F0.} F2 reaches $93.53\pm0.07\%$ macro-F1. It is significantly better than
+        F1 ($+0.73$\,pp) and as good as F0 ($-0.33$\,pp, not significant). F2 is also the best-calibrated model.
+  \item \textbf{Class names drive the result.} Masking them drops the text-only model from $86.8$ to $43.7\%$.
+        On masked titles, F2 is the best fusion: $+2.5$\,pp over F0 and $+0.9$\,pp over F1, both significant.
+  \item \textbf{The auxiliary losses matter, the modality dropout only helps with a missing title.}
+        \begin{itemize}
+          \item Removing the auxiliary losses costs $0.46$\,pp (significant). It also weakens the image branch:
+                accuracy without the title falls from $65.3$ to $58.6\%$.
+          \item Removing the modality dropout does not change the full-test score. It costs $4.7$\,pp when the
+                title is removed.
+        \end{itemize}
+  \item \textbf{The conflict groups explain the remaining errors.} A manual review of 100 conflict items shows
+        two main causes. When only the image model is right, the title is mostly generic ($84\%$); fusion fixes
+        almost all of these. When only the text model is right, the image mostly looks like another dish ($68\%$).
+        The hard case is a title that names another dish: every fusion gets only about half of these right.
+\end{enumerate}
+
+\paragraph{Traceability.}
+\begin{itemize}
+  \item \textbf{Split:} every number comes from the committed split \texttt{data/splits/split.json}.
+  \item \textbf{Code:}
+        \begin{itemize}
+          \item UA, UB and F1 (M2): commit \texttt{cfc509a};
+          \item F2, the ablations and T0 (M3): commit \texttt{b51d3fb};
+          \item analyses: commit \texttt{850b6bb} and later.
+        \end{itemize}
+        Each run records its commit in its \texttt{env.json} file, always with a clean working tree.
+  \item \textbf{Checkpoints:} the selected checkpoints, with SHA-256 checksums, are linked in the Required Links
+        section.
+\end{itemize}

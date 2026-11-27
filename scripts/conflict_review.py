@@ -147,8 +147,45 @@ def score(args):
             if k:
                 print(f"| {gname} | {v} | {k} | {100 * k / n:.0f} % | {100 * lo:.0f}-{100 * hi:.0f} % |")
         summary["groups"][gname] = {"n": n, "verdicts": rows}
+    by_verdict = verdict_vs_models(df, args)
+    if by_verdict is not None:
+        summary["by_verdict"] = by_verdict.reset_index().to_dict(orient="records")
+        t = by_verdict.reset_index()
+        print("\n| " + " | ".join(t.columns) + " |\n|" + " --- |" * len(t.columns))
+        for r in t.itertuples(index=False):
+            print("| " + " | ".join(f"{v:.1f}" if isinstance(v, float) else str(v) for v in r) + " |")
     save_json(summary, resolve_path(args.out))
     print(f"-> {args.out}")
+
+
+def verdict_vs_models(df, args):
+    """Per (group, verdict): how often the fusion models are right, how confident the model that is right is
+    (UA for Conflict-I, UB for Conflict-T), and the share of titles that occur verbatim in train/val."""
+    runs = {"F0": args.f0_run, "F1": args.f1_run, "F2": args.fusion_run}
+    runs = {k: resolve_path(v) for k, v in runs.items() if (resolve_path(v) / "eval/predictions_test.csv").exists()}
+    ua, ub = resolve_path(args.image_run), resolve_path(args.text_run)
+    if not runs or not (ub / "eval/predictions_test.csv").exists():
+        return None
+    d = df.set_index("id")
+    if not d.index.isin(preds(ub).index).all():
+        print("note: review items not in the given runs' predictions; per-verdict table skipped")
+        return None
+    for k, r in runs.items():
+        d[f"{k} right"] = preds(r).loc[d.index, "correct"].astype(bool) * 100.0
+    right_conf = np.where(d["group"] == "conflict_I", preds(ua).loc[d.index, "confidence"],
+                          preds(ub).loc[d.index, "confidence"])
+    d["right model conf"] = right_conf * 100.0
+    tm = pd.read_csv(resolve_path(args.text_meta), dtype=str, keep_default_na=False)
+    trainval = set(pd.concat([pd.read_csv(resolve_path(args.split_dir) / f"{s}.csv", dtype=str)
+                              for s in ("train", "val")])["id"])
+    seen = set(tm.loc[tm["id"].isin(trainval) & (tm["norm_md5"] != ""), "norm_md5"])
+    md5 = tm.set_index("id")["norm_md5"]
+    d["title seen %"] = d.index.map(lambda i: md5.get(i, "") in seen and md5.get(i, "") != "") * 100.0
+    cols = [*(f"{k} right" for k in runs), "right model conf", "title seen %"]
+    g = d.groupby(["group", "verdict"])
+    out = g[cols].mean()
+    out.insert(0, "n", g.size())
+    return out
 
 
 def main():
@@ -167,6 +204,13 @@ def main():
     s = sub.add_parser("score")
     s.add_argument("--csv", default="data/audit/conflict_review.csv")
     s.add_argument("--out", default="data/audit/conflict_review_summary.json")
+    s.add_argument("--split-dir", default="data/splits")
+    s.add_argument("--text-meta", default="data/meta/text_meta.csv.gz")
+    s.add_argument("--image-run", default="outputs/runs/upmc/ua_resnet50/seed42")
+    s.add_argument("--text-run", default="outputs/runs/upmc/ub_distilbert/seed42")
+    s.add_argument("--f0-run", default="outputs/runs/upmc/f0_late_fusion/seed42")
+    s.add_argument("--f1-run", default="outputs/runs/upmc/f1_concat/seed42")
+    s.add_argument("--fusion-run", default="outputs/runs/upmc/f2_crossmodal/seed42")
     args = p.parse_args()
     make(args) if args.cmd == "make" else score(args)
 

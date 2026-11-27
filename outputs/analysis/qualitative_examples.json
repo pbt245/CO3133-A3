@@ -1,0 +1,38 @@
+{
+  "run": "/home/calypso/co3133_t/co3133-a3/outputs/runs/upmc/f2_crossmodal/seed42",
+  "examples": {
+    "support": [
+      "breakfast_burrito_46",
+      "fried_rice_260",
+      "fried_rice_693",
+      "nachos_953",
+      "poutine_588",
+      "scallops_319"
+    ],
+    "conflict_I": [
+      "greek_salad_399",
+      "panna_cotta_365",
+      "peking_duck_861",
+      "pork_chop_866",
+      "pulled_pork_sandwich_287",
+      "tuna_tartare_129"
+    ],
+    "conflict_T": [
+      "chicken_quesadilla_259",
+      "french_toast_771",
+      "macaroni_and_cheese_820",
+      "pork_chop_386",
+      "ramen_962",
+      "spring_rolls_741"
+    ],
+    "both_wrong": [
+      "beef_tartare_977",
+      "cup_cakes_967",
+      "hot_dog_652",
+      "sashimi_53",
+      "scallops_898",
+      "spaghetti_bolognese_748"
+    ]
+  },
+  "seed": 42
+}

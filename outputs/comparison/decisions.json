@@ -20,6 +20,25 @@
   },
   {
     "a": "ub_distilbert",
+    "b": "t0_tfidf",
+    "diff_macro_f1_pp": -0.4608261123433599,
+    "larger_std_pp": 0.25401550514081406,
+    "diff_exceeds_std": true,
+    "mcnemar_seed42": {
+      "b": 260,
+      "c": 655,
+      "statistic": 169.6568306010929,
+      "p_value": 8.792624776782809e-39,
+      "method": "chi2 with continuity correction"
+    },
+    "verdict": "t0_tfidf better",
+    "seeds": [
+      3,
+      1
+    ]
+  },
+  {
+    "a": "ub_distilbert",
     "b": "ua_resnet50",
     "diff_macro_f1_pp": 16.00238180905309,
     "larger_std_pp": 0.25401550514081406,
@@ -59,7 +78,7 @@
   {
     "a": "f1_concat",
     "b": "ub_distilbert",
-    "diff_macro_f1_pp": 6.001546214064824,
+    "diff_macro_f1_pp": 6.001546214064812,
     "larger_std_pp": 0.25401550514081406,
     "diff_exceeds_std": true,
     "mcnemar_seed42": {
@@ -78,7 +97,7 @@
   {
     "a": "f1_concat",
     "b": "ua_resnet50",
-    "diff_macro_f1_pp": 22.003928023117915,
+    "diff_macro_f1_pp": 22.0039280231179,
     "larger_std_pp": 0.058458708440026326,
     "diff_exceeds_std": true,
     "mcnemar_seed42": {
@@ -97,7 +116,7 @@
   {
     "a": "f1_concat",
     "b": "f0_late_fusion",
-    "diff_macro_f1_pp": -1.0626665877620733,
+    "diff_macro_f1_pp": -1.0626665877620844,
     "larger_std_pp": 0.23950781514795585,
     "diff_exceeds_std": true,
     "mcnemar_seed42": {
@@ -108,6 +127,291 @@
       "method": "chi2 with continuity correction"
     },
     "verdict": "f0_late_fusion better",
+    "seeds": [
+      3,
+      3
+    ]
+  },
+  {
+    "a": "f2_crossmodal",
+    "b": "ub_distilbert",
+    "diff_macro_f1_pp": 6.729746656517288,
+    "larger_std_pp": 0.25401550514081406,
+    "diff_exceeds_std": true,
+    "mcnemar_seed42": {
+      "b": 2036,
+      "c": 168,
+      "statistic": 1581.5285843920144,
+      "p_value": 0.0,
+      "method": "chi2 with continuity correction"
+    },
+    "verdict": "f2_crossmodal better",
+    "seeds": [
+      3,
+      3
+    ]
+  },
+  {
+    "a": "f2_crossmodal",
+    "b": "ua_resnet50",
+    "diff_macro_f1_pp": 22.732128465570376,
+    "larger_std_pp": 0.06916802492037269,
+    "diff_exceeds_std": true,
+    "mcnemar_seed42": {
+      "b": 5677,
+      "c": 525,
+      "statistic": 4278.103998710094,
+      "p_value": 0.0,
+      "method": "chi2 with continuity correction"
+    },
+    "verdict": "f2_crossmodal better",
+    "seeds": [
+      3,
+      3
+    ]
+  },
+  {
+    "a": "f2_crossmodal",
+    "b": "f1_concat",
+    "diff_macro_f1_pp": 0.7282004424524757,
+    "larger_std_pp": 0.06916802492037269,
+    "diff_exceeds_std": true,
+    "mcnemar_seed42": {
+      "b": 439,
+      "c": 278,
+      "statistic": 35.70432357043236,
+      "p_value": 2.2965376677765217e-09,
+      "method": "chi2 with continuity correction"
+    },
+    "verdict": "f2_crossmodal better",
+    "seeds": [
+      3,
+      3
+    ]
+  },
+  {
+    "a": "f2_crossmodal",
+    "b": "f0_late_fusion",
+    "diff_macro_f1_pp": -0.3344661453096087,
+    "larger_std_pp": 0.23950781514795585,
+    "diff_exceeds_std": true,
+    "mcnemar_seed42": {
+      "b": 465,
+      "c": 487,
+      "statistic": 0.4632352941176471,
+      "p_value": 0.4961158231244538,
+      "method": "chi2 with continuity correction"
+    },
+    "verdict": "no decision (rule not met)",
+    "seeds": [
+      3,
+      3
+    ]
+  },
+  {
+    "a": "f2_crossmodal",
+    "b": "f2_noaux",
+    "diff_macro_f1_pp": 0.4585644771633257,
+    "larger_std_pp": 0.07677941718211977,
+    "diff_exceeds_std": true,
+    "mcnemar_seed42": {
+      "b": 379,
+      "c": 250,
+      "statistic": 26.047694753577108,
+      "p_value": 3.330863143856676e-07,
+      "method": "chi2 with continuity correction"
+    },
+    "verdict": "f2_crossmodal better",
+    "seeds": [
+      3,
+      3
+    ]
+  },
+  {
+    "a": "f2_crossmodal",
+    "b": "f2_nomoddrop",
+    "diff_macro_f1_pp": 0.08451462801141174,
+    "larger_std_pp": 0.06916802492037269,
+    "diff_exceeds_std": true,
+    "mcnemar_seed42": {
+      "b": 263,
+      "c": 248,
+      "statistic": 0.3835616438356164,
+      "p_value": 0.5357032416623113,
+      "method": "chi2 with continuity correction"
+    },
+    "verdict": "no decision (rule not met)",
+    "seeds": [
+      3,
+      3
+    ]
+  },
+  {
+    "a": "ub_distilbert",
+    "b": "ub_distilbert_mask",
+    "diff_macro_f1_pp": 43.10125775486094,
+    "larger_std_pp": 0.25401550514081406,
+    "diff_exceeds_std": true,
+    "mcnemar_seed42": {
+      "b": 9902,
+      "c": 491,
+      "statistic": 8519.974983161743,
+      "p_value": 0.0,
+      "method": "chi2 with continuity correction"
+    },
+    "verdict": "ub_distilbert better",
+    "seeds": [
+      3,
+      3
+    ]
+  },
+  {
+    "a": "f1_concat",
+    "b": "f1_concat_mask",
+    "diff_macro_f1_pp": 12.368107782297145,
+    "larger_std_pp": 0.1385704648657858,
+    "diff_exceeds_std": true,
+    "mcnemar_seed42": {
+      "b": 3330,
+      "c": 531,
+      "statistic": 2027.6622636622637,
+      "p_value": 0.0,
+      "method": "chi2 with continuity correction"
+    },
+    "verdict": "f1_concat better",
+    "seeds": [
+      3,
+      3
+    ]
+  },
+  {
+    "a": "f2_crossmodal",
+    "b": "f2_crossmodal_mask",
+    "diff_macro_f1_pp": 12.221216215574792,
+    "larger_std_pp": 0.06916802492037269,
+    "diff_exceeds_std": true,
+    "mcnemar_seed42": {
+      "b": 3201,
+      "c": 418,
+      "statistic": 2138.5808234318874,
+      "p_value": 0.0,
+      "method": "chi2 with continuity correction"
+    },
+    "verdict": "f2_crossmodal better",
+    "seeds": [
+      3,
+      3
+    ]
+  },
+  {
+    "a": "ub_distilbert_mask",
+    "b": "ua_resnet50",
+    "diff_macro_f1_pp": -27.098875945807848,
+    "larger_std_pp": 0.15883089933079686,
+    "diff_exceeds_std": true,
+    "mcnemar_seed42": {
+      "b": 2800,
+      "c": 8927,
+      "statistic": 3200.125863392172,
+      "p_value": 0.0,
+      "method": "chi2 with continuity correction"
+    },
+    "verdict": "ua_resnet50 better",
+    "seeds": [
+      3,
+      3
+    ]
+  },
+  {
+    "a": "f0_late_fusion_mask",
+    "b": "ub_distilbert_mask",
+    "diff_macro_f1_pp": 35.15207014518102,
+    "larger_std_pp": 0.17113172912672697,
+    "diff_exceeds_std": true,
+    "mcnemar_seed42": {
+      "b": 8435,
+      "c": 537,
+      "statistic": 6950.803499777085,
+      "p_value": 0.0,
+      "method": "chi2 with continuity correction"
+    },
+    "verdict": "f0_late_fusion_mask better",
+    "seeds": [
+      3,
+      3
+    ]
+  },
+  {
+    "a": "f1_concat_mask",
+    "b": "ub_distilbert_mask",
+    "diff_macro_f1_pp": 36.734696186628604,
+    "larger_std_pp": 0.15883089933079686,
+    "diff_exceeds_std": true,
+    "mcnemar_seed42": {
+      "b": 8938,
+      "c": 619,
+      "statistic": 7239.627916710265,
+      "p_value": 0.0,
+      "method": "chi2 with continuity correction"
+    },
+    "verdict": "f1_concat_mask better",
+    "seeds": [
+      3,
+      3
+    ]
+  },
+  {
+    "a": "f2_crossmodal_mask",
+    "b": "ub_distilbert_mask",
+    "diff_macro_f1_pp": 37.60978819580343,
+    "larger_std_pp": 0.15883089933079686,
+    "diff_exceeds_std": true,
+    "mcnemar_seed42": {
+      "b": 8950,
+      "c": 454,
+      "statistic": 7673.864844746916,
+      "p_value": 0.0,
+      "method": "chi2 with continuity correction"
+    },
+    "verdict": "f2_crossmodal_mask better",
+    "seeds": [
+      3,
+      3
+    ]
+  },
+  {
+    "a": "f2_crossmodal_mask",
+    "b": "f1_concat_mask",
+    "diff_macro_f1_pp": 0.8750920091748271,
+    "larger_std_pp": 0.1385704648657858,
+    "diff_exceeds_std": true,
+    "mcnemar_seed42": {
+      "b": 1202,
+      "c": 1025,
+      "statistic": 13.90929501571621,
+      "p_value": 0.0001918473712718253,
+      "method": "chi2 with continuity correction"
+    },
+    "verdict": "f2_crossmodal_mask better",
+    "seeds": [
+      3,
+      3
+    ]
+  },
+  {
+    "a": "f2_crossmodal_mask",
+    "b": "f0_late_fusion_mask",
+    "diff_macro_f1_pp": 2.457718050622415,
+    "larger_std_pp": 0.17113172912672697,
+    "diff_exceeds_std": true,
+    "mcnemar_seed42": {
+      "b": 1760,
+      "c": 1162,
+      "statistic": 121.97433264887064,
+      "p_value": 2.3384370393331e-28,
+      "method": "chi2 with continuity correction"
+    },
+    "verdict": "f2_crossmodal_mask better",
     "seeds": [
       3,
       3

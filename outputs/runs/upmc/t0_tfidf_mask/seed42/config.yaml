@@ -1,0 +1,82 @@
+seed: 42
+deterministic: false
+experiment:
+  name: t0_tfidf_mask
+  id: E2-T0
+  group: main
+  mandatory: false
+data:
+  name: upmc
+  upmc_root: auto
+  image_root: auto
+  split_dir: data/splits
+  train_on: complete
+  image_size: 224
+  resize: 256
+  num_workers: 4
+  augment:
+    crop_scale:
+    - 0.35
+    - 1.0
+    hflip: true
+    color_jitter: 0.1
+text:
+  model_dir: auto
+  max_length: 64
+  mask_class_names: true
+train:
+  epochs: 5
+  batch_size: 64
+  eval_batch_size: 256
+  label_smoothing: 0.0
+  grad_clip: 1.0
+  amp: true
+  amp_dtype: auto
+  early_stopping_patience: 3
+  checkpoint_metric: val_macro_f1
+  freeze_encoders_epochs: 0
+  max_hours: 0
+  max_steps_per_epoch: 0
+  show_progress: true
+optim:
+  name: adamw
+  groups:
+    image_encoder:
+      lr: 0.0001
+      weight_decay: 0.05
+    text_encoder:
+      lr: 3.0e-05
+      weight_decay: 0.01
+    head:
+      lr: 0.001
+      weight_decay: 0.01
+scheduler:
+  name: cosine
+  warmup_ratio: 0.05
+  min_lr_ratio: 0.01
+eval:
+  amp: true
+  bootstrap_samples: 1000
+  ece_bins: 15
+  n_examples: 20
+  inference:
+    batch_size: 128
+    warmup_iters: 10
+    timed_iters: 30
+    latency_samples: 200
+output:
+  root: outputs/runs
+model:
+  name: tfidf_logreg
+  word_ngrams:
+  - 1
+  - 2
+  char_ngrams:
+  - 3
+  - 5
+  min_df: 2
+  C_grid:
+  - 1.0
+  - 4.0
+  - 16.0
+  max_iter: 400

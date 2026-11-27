@@ -1,0 +1,84 @@
+seed: 2026
+deterministic: false
+experiment:
+  name: ub_distilbert_mask
+  id: E2-UB
+  group: ablation
+  mandatory: true
+  reference: ub_distilbert
+  changed_factor: 'text.mask_class_names: false -> true'
+  hypothesis: masking lowers UB by >= 10 pp, widens the fusion gain over UB, helps
+    F2 on conflict items
+  decision_criterion: decision rule per model; F2 - UB gap as mean +- std
+data:
+  name: upmc
+  upmc_root: auto
+  image_root: auto
+  split_dir: data/splits
+  train_on: complete
+  image_size: 224
+  resize: 256
+  num_workers: 16
+  augment:
+    crop_scale:
+    - 0.35
+    - 1.0
+    hflip: true
+    color_jitter: 0.1
+text:
+  model_dir: auto
+  max_length: 64
+  mask_class_names: true
+train:
+  epochs: 5
+  batch_size: 64
+  eval_batch_size: 256
+  label_smoothing: 0.0
+  grad_clip: 1.0
+  amp: true
+  amp_dtype: auto
+  early_stopping_patience: 3
+  checkpoint_metric: val_macro_f1
+  freeze_encoders_epochs: 0
+  max_hours: 0
+  max_steps_per_epoch: 0
+  show_progress: false
+optim:
+  name: adamw
+  groups:
+    image_encoder:
+      lr: 0.0001
+      weight_decay: 0.05
+    text_encoder:
+      lr: 3.0e-05
+      weight_decay: 0.01
+    head:
+      lr: 0.001
+      weight_decay: 0.01
+scheduler:
+  name: cosine
+  warmup_ratio: 0.05
+  min_lr_ratio: 0.01
+eval:
+  amp: true
+  bootstrap_samples: 1000
+  ece_bins: 15
+  n_examples: 20
+  inference:
+    batch_size: 128
+    warmup_iters: 10
+    timed_iters: 30
+    latency_samples: 200
+output:
+  root: outputs/runs
+model:
+  name: text_only
+  pretrained: true
+  head_dropout: 0.1
+run:
+  run_id: upmc-ub_distilbert_mask-s2026-20261126-095501
+  config_file: /home/calypso/co3133_t/co3133-a3/configs/upmc/ablations/ub_distilbert_mask.yaml
+  overrides:
+  - data.num_workers=16
+  - train.show_progress=false
+  started_at: 2026-11-26T09:55:01-0500

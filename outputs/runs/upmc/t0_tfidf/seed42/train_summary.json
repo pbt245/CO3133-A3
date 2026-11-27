@@ -1,0 +1,14 @@
+{
+  "experiment": "t0_tfidf",
+  "model": "tfidf_logreg",
+  "seed": 42,
+  "finished": true,
+  "train_time_s": 261.5734456349164,
+  "parameters": {
+    "total": 13584803,
+    "trainable": 13584803
+  },
+  "best_val_macro_f1": 0.8790159456098988,
+  "C": 4.0,
+  "device": "cpu"
+}
